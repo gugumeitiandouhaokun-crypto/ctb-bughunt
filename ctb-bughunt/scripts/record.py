@@ -2,11 +2,12 @@
 """录制：只写步骤，在无 bug 被测程序上录制真实返回，自动生成数据表断言用例。
 
 步骤文件格式（UTF-8，可由生成脚本 stdout 产出）：
-  == test_xxx ==            开始一个测试方法（名称须以 test 开头，仅 ASCII 字母数字下划线）
+  == test_cjl_xxx ==        开始一个测试方法（名称须以 test_cjl_ 开头，仅 ASCII 字母数字下划线）
   cmd(args)                 一条命令
   $name = cmd(args)         发送命令，并把返回中第一个 ':' 之后的文本存入变量 name
   $name/regex/ = cmd(args)  发送命令，并把 regex 第 1 个分组（无分组取整体匹配）存入 name
   ${name}                   在后续命令中引用变量（变量只在本测试方法内有效）
+  #: 描述                   场景描述（属于当前测试，可多行，进入场景库）
   # ...                     注释；空行忽略
 
 录制流程：
@@ -16,7 +17,7 @@
        两轮一致                         -> 精确断言 (cmd, ret)
        不一致但可用捕获变量模板化       -> 模板断言 (cmd, tpl, 't', ...)
        仍不一致                         -> 只断言返回码 (cmd, ret, 'p', ...)
-  4. 写入 testaw.py（数据表 + 运行时 run_steps）与 udpunittest.py（测试方法），按名称整块替换。
+  4. 写入 testaw.py（数据表 cjl_steps_<测试名> + 运行时 cjl_run_steps）与 udpunittest.py（测试方法），按名称整块替换。
 
 用法：
   python record.py --answer answer -f notes/steps/a.txt [--name a] [--dry-run] [--coverage-exec X.exec]
@@ -25,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import json
 import logging
 import os
 import re
@@ -33,8 +35,12 @@ import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dut  # noqa: E402
+import hits  # noqa: E402
+from naming import TABLE_PREFIX, TEST_NAME_RE, TEST_PREFIX  # noqa: E402
+
 HEADER_RE = re.compile(r"^==\s*(\S+)\s*==$")
-TEST_NAME_RE = re.compile(r"^test[A-Za-z0-9_]*$")
 CAPTURE_RE = re.compile(r"^\$([A-Za-z_]\w*)(?:/(.*)/)?\s*=\s*(.+)$")
 VAR_RE = re.compile(r"\$\{(\w+)\}")
 BLOCK_NAME_RE = re.compile(r"^[A-Za-z0-9_]+$")
@@ -44,35 +50,35 @@ MIN_TEMPLATE_LEN = 2
 RUNTIME_BEGIN = "# ==== ctb-bughunt runtime begin ===="
 RUNTIME_END = "# ==== ctb-bughunt runtime end ===="
 RUNTIME_BLOCK = RUNTIME_BEGIN + '''
-import re as _ctb_re
+import re as cjl_re
 
-from testtool import tool as _ctb_tool
+from testtool import tool as cjl_tool
 
-_CTB_VAR = _ctb_re.compile(r'\\$\\{(\\w+)\\}')
-
-
-def _ctb_fill(text, env):
-    return _CTB_VAR.sub(lambda m: env.get(m.group(1), m.group(0)), text)
+cjl_var_re = cjl_re.compile(r'\\$\\{(\\w+)\\}')
 
 
-def _ctb_capture(ret, regex):
+def cjl_fill(text, env):
+    return cjl_var_re.sub(lambda m: env.get(m.group(1), m.group(0)), text)
+
+
+def cjl_capture(ret, regex):
     if regex:
-        m = _ctb_re.search(regex, ret)
+        m = cjl_re.search(regex, ret)
         if not m:
             return ''
         return m.group(1) if m.groups() else m.group(0)
     return ret.split(':', 1)[1] if ':' in ret else ''
 
 
-def run_steps(case, steps):
+def cjl_run_steps(case, steps):
     env = {}
     for no, step in enumerate(steps, 1):
-        cmd = _ctb_fill(step[0], env)
-        ret = _ctb_tool.send_cmd(cmd)
+        cmd = cjl_fill(step[0], env)
+        ret = cjl_tool.send_cmd(cmd)
         mode = step[2] if len(step) > 2 else 'e'
         if len(step) > 3 and step[3]:
-            env[step[3]] = _ctb_capture(ret, step[4] if len(step) > 4 else '')
-        expected = _ctb_fill(step[1], env) if mode == 't' else step[1]
+            env[step[3]] = cjl_capture(ret, step[4] if len(step) > 4 else '')
+        expected = cjl_fill(step[1], env) if mode == 't' else step[1]
         if mode == 'p':
             ok = ret.split(':', 1)[0] == expected.split(':', 1)[0]
         else:
@@ -93,21 +99,26 @@ def parse_steps(text: str) -> list[dict]:
     current = None
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
+        if line.startswith("#:") and current is not None:
+            desc = line[2:].strip()
+            if desc:
+                current["scenario"] = (current["scenario"] + " " + desc).strip()
+            continue
         if not line or line.startswith("#"):
             continue
         m = HEADER_RE.match(line)
         if m:
             name = m.group(1)
             if not TEST_NAME_RE.match(name):
-                raise StepError(f"第 {lineno} 行：测试名 {name!r} 须以 test 开头且只含 ASCII 字母、数字、下划线")
+                raise StepError(f"第 {lineno} 行：测试名 {name!r} 须以 {TEST_PREFIX} 开头且只含 ASCII 字母、数字、下划线")
             if name in names:
                 raise StepError(f"第 {lineno} 行：测试名 {name} 重复")
             names.add(name)
-            current = {"name": name, "steps": [], "vars": set()}
+            current = {"name": name, "steps": [], "vars": set(), "scenario": ""}
             tests.append(current)
             continue
         if current is None:
-            raise StepError(f"第 {lineno} 行：命令出现在第一个 '== test_xxx ==' 之前")
+            raise StepError(f"第 {lineno} 行：命令出现在第一个 '== {TEST_PREFIX}xxx ==' 之前")
         cap, regex, cmd = "", "", line
         m = CAPTURE_RE.match(line)
         if m:
@@ -126,7 +137,7 @@ def parse_steps(text: str) -> list[dict]:
         if cap:
             current["vars"].add(cap)
     if not tests:
-        raise StepError("没有任何测试（缺少 '== test_xxx ==' 行）")
+        raise StepError(f"没有任何测试（缺少 '== {TEST_PREFIX}xxx ==' 行）")
     empty = [t["name"] for t in tests if not t["steps"]]
     if empty:
         raise StepError(f"以下测试没有步骤：{', '.join(empty)}")
@@ -154,10 +165,12 @@ def code_of(ret: str) -> str:
 
 # ---------------------------------------------------------------- 执行
 
-def execute_round(tests: list[dict], send) -> list[dict]:
+def execute_round(tests: list[dict], send, after_test=None) -> list[dict]:
     """执行一轮；返回每个测试的 {init, seconds, steps:[{cmd, ret, env}]}。env 为本步捕获后的变量快照。"""
     out = []
     for t in tests:
+        if out and after_test:
+            after_test(tests[len(out) - 1]["name"])
         init_ret = send("init()")
         env: dict[str, str] = {}
         steps = []
@@ -169,14 +182,19 @@ def execute_round(tests: list[dict], send) -> list[dict]:
                 env[s["cap"]] = capture(ret, s["regex"])
             steps.append({"cmd": real, "ret": ret, "env": dict(env)})
         out.append({"init": init_ret, "seconds": time.time() - t0, "steps": steps})
+    if out and after_test:
+        after_test(tests[len(out) - 1]["name"])
     return out
 
 
-def record_on_dut(answer_dir: Path, tests: list[dict], coverage_env: dict | None = None) -> tuple[list, list]:
+def record_on_dut(answer_dir: Path, tests: list[dict], coverage_env: dict | None = None,
+                  hooks=None) -> tuple[list, list]:
+    """hooks 可选，提供 started() / test_done(测试名) / finished()，用于在第 A 轮按测试切分覆盖率。"""
     answer_dir = answer_dir.resolve()
     jars = sorted(answer_dir.glob("*.jar"))
     if len(jars) != 1:
         raise SystemExit(f"答题目录根下必须恰好有一个 jar，当前 {[j.name for j in jars]}")
+    dut.prepare(answer_dir)
     cwd = os.getcwd()
     saved_env = {k: os.environ.get(k) for k in (coverage_env or {})}
     os.chdir(answer_dir)
@@ -189,11 +207,15 @@ def record_on_dut(answer_dir: Path, tests: list[dict], coverage_env: dict | None
             h.setLevel(logging.WARNING)
         tool.start_dut()
         try:
+            if hooks:
+                hooks.started()
             total = sum(len(t["steps"]) for t in tests)
             print(f"第 A 轮：{len(tests)} 个测试，{total} 步 ...", flush=True)
-            run_a = execute_round(tests, tool.send_cmd)
+            run_a = execute_round(tests, tool.send_cmd, hooks.test_done if hooks else None)
             print("第 B 轮（同一进程继续执行）...", flush=True)
             run_b = execute_round(tests, tool.send_cmd)
+            if hooks:
+                hooks.finished()
         finally:
             try:
                 tool.stop_dut()
@@ -206,6 +228,7 @@ def record_on_dut(answer_dir: Path, tests: list[dict], coverage_env: dict | None
             else:
                 os.environ[k] = v
         os.chdir(cwd)
+        dut.ensure_stopped(answer_dir)
     return run_a, run_b
 
 
@@ -268,7 +291,7 @@ def render_tables(name: str, built: list[dict]) -> str:
     begin, end = _markers("tables", name)
     out = [begin]
     for t in built:
-        out.append(f"STEPS_{t['name']} = (")
+        out.append(f"{TABLE_PREFIX}{t['name']} = (")
         for row in t["rows"]:
             out.append("    (" + ", ".join(repr(x) for x in row) + "),")
         out.append(")")
@@ -285,7 +308,7 @@ def render_tests(name: str, built: list[dict]) -> str:
     for t in built:
         out += ["    @timeout(global_default_timeout)",
                 f"    def {t['name']}(self):",
-                f"        testaw.run_steps(self, testaw.STEPS_{t['name']})",
+                f"        testaw.cjl_run_steps(self, testaw.{TABLE_PREFIX}{t['name']})",
                 ""]
     out.append(end)
     return "\n".join(out)
@@ -434,24 +457,46 @@ def summarize(name: str, built: list[dict], unstable: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def save_raw(path: Path, name: str, tests: list[dict], built: list[dict], run_a: list[dict], run_b: list[dict]) -> None:
+    data = {"name": name, "tests": []}
+    for t, b, ra, rb in zip(tests, built, run_a, run_b):
+        steps = []
+        for row, a, bb in zip(b["rows"], ra["steps"], rb["steps"]):
+            steps.append({"cmd": a["cmd"], "ret_a": a["ret"], "ret_b": bb["ret"],
+                          "mode": row[2] if len(row) > 2 else "e"})
+        data["tests"].append({"name": t["name"], "scenario": t.get("scenario", ""), "init": ra["init"],
+                              "seconds": round(ra["seconds"], 3),
+                              "template": [s["cmd"] for s in t["steps"]], "steps": steps})
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 def record(answer_dir: Path, steps_text: str, name: str, report_dir: Path,
-           dry_run: bool = False, coverage_env: dict | None = None) -> dict:
+           dry_run: bool = False, coverage_env: dict | None = None, hooks=None,
+           notes_dir: Path | None = None) -> dict:
     if not BLOCK_NAME_RE.match(name):
         raise SystemExit(f"录制名称 {name!r} 只能包含 ASCII 字母、数字、下划线")
     try:
         tests = parse_steps(steps_text)
     except StepError as exc:
         raise SystemExit(f"步骤解析失败：{exc}") from None
+    skip: dict[str, str] = {}
+    if notes_dir is not None:
+        skip, warns = hits.screen(notes_dir, tests)
+        for w in warns:
+            print(f"[场景库] 警告：{w}")
+        for t, why in skip.items():
+            print(f"[场景库] {t} {why}，不写入答题文件")
     if not dry_run:
         ut_text, _ = _read_keep_eol(answer_dir / "udpunittest.py")
-        merge_udpunittest(ut_text, name, [{"name": t["name"], "rows": []} for t in tests])
-    run_a, run_b = record_on_dut(answer_dir, tests, coverage_env)
+        merge_udpunittest(ut_text, name, [{"name": t["name"], "rows": []} for t in tests if t["name"] not in skip])
+    run_a, run_b = record_on_dut(answer_dir, tests, coverage_env, hooks)
     built, unstable = build_tables(tests, run_a, run_b)
     report_dir.mkdir(parents=True, exist_ok=True)
     report_path = report_dir / f"{name}.md"
     report_path.write_text(render_report(name, built, unstable, run_a), encoding="utf-8")
+    save_raw(report_dir / f"{name}.json", name, tests, built, run_a, run_b)
     if not dry_run:
-        write_answer(answer_dir.resolve(), name, built)
+        write_answer(answer_dir.resolve(), name, [b for b in built if b["name"] not in skip])
     print(summarize(name, built, unstable))
     print(f"报告：{report_path}" + ("（dry-run，未写入答题文件）" if dry_run else "；已写入 testaw.py / udpunittest.py"))
     return {"built": built, "unstable": unstable, "report": report_path}

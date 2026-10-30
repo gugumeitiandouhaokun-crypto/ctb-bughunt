@@ -24,6 +24,9 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dut  # noqa: E402
+
 RESET = "---"
 JAR_LOG_RE = re.compile(r"^\d{4}-\d\d-\d\d [\d:.]+ \[[^\]]*\]\s+(\w+)\s+([\w.$]+)\s+-\s+(.*)$")
 SETTLE_SEC = 0.02
@@ -75,6 +78,7 @@ def run_probe(answer_dir: Path, commands: list[str], log_dir: Path | None = None
         log_dir.mkdir(parents=True, exist_ok=True)
         log_path = log_dir / f"{datetime.now():%Y%m%d_%H%M%S}.txt"
 
+    dut.prepare(answer_dir)
     cwd = os.getcwd()
     os.chdir(answer_dir)
     sys.path.insert(0, str(answer_dir))
@@ -108,6 +112,7 @@ def run_probe(answer_dir: Path, commands: list[str], log_dir: Path | None = None
                 print(f"(stop_dut 异常，可忽略：{exc})")
     finally:
         os.chdir(cwd)
+        dut.ensure_stopped(answer_dir)
 
     if costs:
         summary = f"# {len(costs)} 条命令，平均 {sum(costs) / len(costs):.1f}ms，最长 {max(costs):.1f}ms"

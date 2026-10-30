@@ -11,13 +11,16 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
-import socket
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dut  # noqa: E402
 
 CASE_LIMIT_SEC = 300
 CASE_WARN_SEC = 250
@@ -104,33 +107,6 @@ def parse_costs(text: str) -> dict[str, float]:
     return out
 
 
-def _udp_port(answer_dir: Path) -> int | None:
-    cfg = answer_dir / "config.properties"
-    if not cfg.is_file():
-        return None
-    for line in cfg.read_text(encoding="utf-8", errors="replace").splitlines():
-        line = line.strip()
-        if not line.startswith("#") and "=" in line:
-            k, v = line.split("=", 1)
-            if k.strip() == "udpPort":
-                try:
-                    return int(v.strip())
-                except ValueError:
-                    return None
-    return None
-
-
-def _force_exit_dut(answer_dir: Path) -> None:
-    port = _udp_port(answer_dir)
-    if not port:
-        return
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.sendto(b"EXIT()", ("127.0.0.1", port))
-    finally:
-        s.close()
-
-
 def format_report(rep: dict) -> str:
     out = []
     if rep.get("timeout"):
@@ -161,6 +137,7 @@ def run_local(answer_dir: Path, notes_dir: Path | None = None, timeout: int = 18
         raise SystemExit(f"缺少 {answer_dir / 'udpunittest.py'}")
     log = answer_dir / "udpunittest.log"
     log.unlink(missing_ok=True)
+    dut.prepare(answer_dir)
     start = time.time()
     rep: dict = {}
     try:
@@ -175,7 +152,8 @@ def run_local(answer_dir: Path, notes_dir: Path | None = None, timeout: int = 18
     except subprocess.TimeoutExpired:
         rep["timeout"] = timeout
         rep["returncode"] = None
-        _force_exit_dut(answer_dir)
+        print(f"[被测程序] {dut.stop(answer_dir)}", flush=True)
+    dut.ensure_stopped(answer_dir)
     text = log.read_text(encoding="utf-8", errors="replace") if log.is_file() else ""
     rep.update(parse_log(text))
     thread_errors = parse_thread_errors(rep.get("stderr_full") or "")
@@ -192,6 +170,9 @@ def run_local(answer_dir: Path, notes_dir: Path | None = None, timeout: int = 18
     if notes_dir is not None:
         notes_dir.mkdir(parents=True, exist_ok=True)
         (notes_dir / "local_last.txt").write_text(report + "\n", encoding="utf-8")
+        (notes_dir / "local_last.json").write_text(json.dumps(
+            {"ok": rep["ok"], "results": rep["results"], "costs": rep["costs"]}, ensure_ascii=False, indent=1),
+            encoding="utf-8")
     return rep
 
 

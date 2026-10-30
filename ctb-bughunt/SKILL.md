@@ -1,14 +1,16 @@
 ---
 name: ctb-bughunt
-description: 华为 iLearning 软件测试实操题（UDP 黑盒被测系统 + Python 测试框架）的找 bug 用例开发全流程：拉取题目、反编译无 bug jar、探针摸清接口、只写步骤由无 bug 版本录制真实返回自动生成逐条精确断言、JaCoCo 覆盖率指引补充场景、本地验证、调试判题、复盘迭代、正式提交。Use when developing bug-hunting test cases for iLearning softTest / CTB UDP system-under-test exams.
+description: 华为 iLearning 软件测试实操题（UDP 黑盒被测系统 + Python 测试框架）的找 bug 用例开发全流程，适用于任意被测业务系统：拉取题目、反编译无 bug jar、起草并审阅接口规格、只写步骤由无 bug 版本录制真实返回自动生成逐条精确断言、接口×返回码矩阵与分层覆盖率（定位到未执行的源码行）指引补充场景、本地验证、调试判题后按命中精简用例并维护场景库、复盘迭代、正式提交。Use when developing bug-hunting test cases for iLearning softTest / CTB UDP system-under-test exams.
 compatibility: opencode
 ---
 
 # ctb-bughunt：找 bug 测试用例开发
 
 目标：针对题目给出的被测系统，写出在**无 bug 版本上全部通过**、在植入 bug 的版本上**检出尽量多 bug** 的测试用例。
-方法论：**探针摸清接口 → 生成脚本描述超大密集多对象场景 → 录制得到逐条精确断言 → 覆盖率找缺口补场景 → 判题复盘闭环**。
-开始前必须读完 `references/methodology.md` 与 `references/recording.md`。
+方法论：**接口规格 → 生成脚本描述超大密集多对象场景 → 录制得到逐条精确断言 → 矩阵与覆盖率找缺口补场景 → 判题复盘闭环**。
+参考资料按需读取：每一步的"读"列出进入该步时才需要的文档章节，不要一次读完全部参考资料（读取方式见文末"参考资料"）。
+
+本 skill 不针对任何具体题目：命令、返回码、业务类都从题目描述、反编译源码和真实返回中获得；脚本给出的自动识别结果都是草稿，由你审阅确认。
 
 ## 脚本位置与调用方式
 
@@ -25,74 +27,131 @@ python "<SKILL>/scripts/ctb.py" <子命令> [参数]
 | 子命令 | 作用 |
 |---|---|
 | `cookies` | 获取/刷新 iLearning 登录 Cookie（弹出浏览器免密登录） |
-| `pull --subject <题目ID或URL>` | 拉取题目描述、框架、jar 与服务端代码到 `answer/`，保存原件到 `notes/pristine/` |
+| `pull --subject <题目ID或URL>` | 拉取题目描述、框架、jar 与服务端代码到 `answer/`，保存原件到 `notes/pristine/`，`udpPort` 改为本工作目录专用端口 |
 | `decompile` | 反编译 `answer/` 下的无 bug jar 到 `decompiled/src/`，生成 `decompiled/index.md` |
+| `analysis [--done]` | 查看 `notes/题目分析.md` 是否已固化、哪些章节为空；`--done` 记录分析对应的题目描述与 jar 指纹（之后题目或 jar 变化会提示复核） |
+| `spec [--force]` | 从题目描述与反编译源码起草接口规格 `notes/spec.json`（命令、返回码形态、各命令返回码），需审阅 |
 | `probe -f <命令文件>` / `probe -c "<命令>"` | 探针：启动无 bug 程序逐条发送命令，打印真实返回与耗时，记录到 `notes/probes/` |
-| `record --gen <生成脚本>` / `record -f <步骤文件>` | 录制：在无 bug 程序上双跑步骤，生成数据表断言写入 `testaw.py` / `udpunittest.py`，随后自动 `check` + `local`；`--dry-run` 只出报告不写文件，`--coverage` 同时统计覆盖率，`--name` 指定录制名称 |
-| `coverage` | 带 JaCoCo 跑一次 `local`，输出业务代码覆盖率与未覆盖方法到 `notes/coverage/` |
+| `record --gen <生成脚本>` / `record -f <步骤文件>` | 录制：在无 bug 程序上双跑步骤，生成数据表断言写入 `testaw.py` / `udpunittest.py`，随后打印矩阵缺口并自动 `check` + `local`；`--dry-run` 只出报告不写文件，`--coverage` 同时统计分层覆盖率与每个测试的贡献，`--name` 指定录制名称 |
+| `matrix` | 接口 × 返回码矩阵：汇总录制与探针的真实返回，与 spec 对照列出未调用、未触发、单一返回码、规格外 |
+| `coverage` | 带 JaCoCo 跑一次 `local`（含手写用例），输出分层覆盖率到 `notes/coverage/` |
 | `check` | 提交前规范检查（框架铁律、Python 3.8 语法、标准库、残留文件等） |
 | `local` | 在无 bug 程序上运行 `answer/udpunittest.py`，以日志 `Ran N tests ... OK` 判定 |
-| `run` | 先 `check` + `local` 全部通过，再提交平台调试（type=2），判题结果进 `notes/judge/` |
-| `submit --yes` | 同 `run` 的前置检查，正式提交（type=1，计入成绩） |
+| `run [--no-prune]` | 先 `check` + `local` 全部通过，再提交平台调试（type=2），判题结果进 `notes/judge/`；随后记录命中、追加场景库并精简用例（`--no-prune` 只记录不删除） |
+| `submit --yes [--no-prune]` | 同 `run` 的前置检查，正式提交（type=1，计入成绩），之后同样记录命中并精简 |
+| `hits` / `prune` | 查看命中记录与场景库摘要 / 对最近一轮判题执行精简（`--no-prune` 之后使用） |
+| `stop` | 停止本工作目录的被测程序（按端口查进程） |
 | `status` / `info` | 查看本地进度 / 平台题目状态与提交记录 |
 
-依赖：Python 3.10+（`pip install requests selenium`）、`java` 在 PATH 中、iLearning 免密登录环境。
+依赖：Python 3.10+（`pip install requests selenium`）、`java` 在 PATH 中（JRE 即可）、iLearning 免密登录环境。
 
 ## 工作目录
 
-每道题使用一个独立的空目录：
+每道题使用一个独立的空目录（覆盖率要求路径为纯英文、无空格，或系统可生成短路径）：
 
 ```
 <work>/
   cookies.json
   answer/       题目与框架；提交的就是这里的 testaw.py、udpunittest.py
   decompiled/   src/ 反编译源码，index.md 类/方法/字符串常量索引
-  notes/        ctb.json、pristine/、数值模型.md、复盘.md、probes/、judge/history.md、local_last.txt
+  notes/        ctb.json、pristine/、probes/、judge/history.md、local_last.txt/.json
+                题目分析.md  对题目与接口的理解（固化后代替重读题目描述与源码）
+                数值模型.md  探针确认的返回格式、约束、公式与常量
+                复盘.md      每轮判题记录与下一轮计划
+                场景库.md    每轮判题后每个用例的场景、规模与命中情况（自动追加）
+                hits.json    命中轮次记录与场景步骤指纹
+                spec.json  接口规格（spec.auto.json 为上次自动提取结果，勿手改）
+                matrix.md  接口 × 返回码矩阵
                 steps/     生成脚本与其输出的步骤
-                record/    录制报告
-                coverage/  覆盖率报告与 history.md
+                record/    录制报告 <名称>.md 与原始结果 <名称>.json
+                coverage/  覆盖率报告、history.md、scope.json（可选，人工指定分层）
 ```
 
 ## 流程（按序执行）
 
+0. **会话开始（每次新会话或上下文被压缩后）**
+   - `ctb.py status`。
+   - 题目分析显示"已固化"：读 `notes/题目分析.md`、`notes/数值模型.md`、`notes/复盘.md`、`notes/场景库.md`（存在的话），从复盘记录的下一轮计划继续；不重读题目描述与源码。
+   - 后续需要的信息在这些文件里找不到时，只在题目描述或源码中搜索该点，读到后补写进 `notes/题目分析.md`。
+   - 显示"需复核"：重读题目描述并核对源码，更新题目分析后执行 `ctb.py analysis --done`。
+   - 题目还没拉取或分析未固化：从第 1 步开始。
 1. **拉题与通读**
+   - 读：`framework_rules.md` 全文；`methodology.md` 一、二节与三节"第 0 步"。
    - `ctb.py pull --subject <ID或URL>`（没有 Cookie 时会自动获取）。
-   - 通读 `answer/题目描述.md`、`answer/题目补充信息.md`、`answer/udpunittest.py`、`answer/testaw.py`、`references/framework_rules.md`。
-   - 列出全部接口、参数、返回格式、业务规则、数值边界、时间规则，写入 `notes/数值模型.md`。
+   - 通读 `answer/题目描述.md`、`answer/题目补充信息.md`、`answer/udpunittest.py`、`answer/testaw.py`。
+   - 用自己的理解写 `notes/题目分析.md`（结构见下方"题目分析"）。
 2. **反编译梳理规则**
+   - 读：无参考资料。
    - `ctb.py decompile`，先读 `decompiled/index.md`，再按需打开具体源码文件，不要整份读入。
-   - 从命令名字符串定位命令分发处，逐个接口梳理：参数校验顺序、返回码与返回文本、状态字段、计算公式与常量、时间/周期处理、容量上限。
-   - 结论作为**待验证的假设**写入 `notes/数值模型.md`。源码只提供假设，断言用的数值必须来自探针。
-3. **探针摸清接口**
+   - 从命令名定位命令处理代码，逐个接口梳理：参数校验顺序、返回码与返回文本、状态字段、计算公式与常量、时间/周期处理、容量上限。
+   - 结论补进 `notes/题目分析.md`，来源标"源码"，作为**待探针验证的假设**。
+3. **起草并审阅接口规格**
+   - 读：`recording.md` 五节。
+   - `ctb.py spec`，对照题目分析修正 `notes/spec.json`：删除误识别的命令，补全每个命令可能的返回码（含源码中能走到的失败码），修正 `code_pattern`；确认后把 `reviewed` 改为 `true`。
+4. **探针摸清接口**
+   - 读：`methodology.md` 五节"时间与资源排布"。
    - 在 `notes/probes/` 下写命令文件，`ctb.py probe -f notes/probes/<名称>.txt` 确认每个接口的返回格式、非法分支返回码、系统生成标识的形态、时间边界与资源上限。
-   - 记下单条命令平均耗时，用于估算每个测试的步骤数上限；结论写回 `notes/数值模型.md` 并注明探针记录文件名。
-4. **生成脚本 + 录制迭代**（格式与约束见 `references/recording.md`）
-   - 在 `notes/steps/` 下按场景主题写生成脚本，按 `references/methodology.md` 的规模锚点与多对象骨架输出步骤。
-   - `ctb.py record --gen notes/steps/<名称>.py --dry-run --coverage`，读录制报告（命令分布、返回码分布、两轮不一致清单）与覆盖率报告（部分覆盖/未执行的业务方法）。
-   - 对照反编译源码补对象、轮次、状态组合与非法分支，重复录制，直到业务方法覆盖不再提升、命令分布合理、不一致步骤已处理。
-5. **写入并本地全绿**
+   - 记下单条命令平均耗时，用于估算每个测试的步骤数上限；确认的数值写入 `notes/数值模型.md` 并注明探针记录文件名，题目分析中被证实或推翻的条目同步改正。
+   - 题目分析完整后执行 `ctb.py analysis --done` 固化。
+5. **生成脚本 + 录制迭代**
+   - 写生成脚本前读：`methodology.md` 四、五、六节；`recording.md` 一、二、三节。
+   - 第一次看录制结果前读：`recording.md` 四、六、八、九节。覆盖率报告"注意"中提示分层存疑或核心类为空时，再读七节。
+   - 已有判题记录时，先读 `notes/场景库.md`：新场景不重复库中已有的场景（同样的命令组合、对象状态与数据形态）。
+   - 在 `notes/steps/` 下按场景主题写生成脚本，按规模锚点与多对象骨架输出步骤；每个测试用 `#:` 行写一句场景描述。
+   - `ctb.py record --gen notes/steps/<名称>.py --dry-run --coverage`，依次读：矩阵缺口、录制报告（两轮不一致清单）、覆盖率报告（核心类指标、测试贡献、部分覆盖方法下列出的未执行行与缺分支行及其反编译源码位置）。
+   - 针对每个缺口打开对应源码行，构造能走到该分支的步骤（非法输入、边界值、容量上限、特定状态组合），重复录制，直到矩阵缺口只剩确认无法触发的项、核心类覆盖不再提升、不一致步骤已处理。
+6. **写入并本地全绿**
+   - 读：需要手写用例时读 `assertion_patterns.md` 中对应写法的章节。
    - 去掉 `--dry-run` 执行 `ctb.py record --gen ...`，自动写入并执行 `check` + `local`。
-   - 需要表达公式或累计关系的断言，在录制标记之外手写用例（写法见 `references/assertion_patterns.md`），数值先探针确认。
-   - 手写或调整后 `ctb.py check` + `ctb.py local` 直到全部通过；`ctb.py coverage` 查看全部用例的覆盖率。
-6. **调试判题与复盘**
-   - `ctb.py run`，阅读输出的 bug 检出表与代码质量扣分项（摘要在 `notes/judge/history.md`）。
-   - 在 `notes/复盘.md` 记录本轮：得分、未检出 bug、覆盖率、推测缺口（规则/非法分支/状态深度/未覆盖方法）、下一轮计划；然后回到第 4 步。
-7. **正式提交**：检出不再提升或用户确认后，执行 `ctb.py submit --yes`。正式提交计入成绩，除非用户已明确要求，否则先征得用户同意。
+   - 需要表达公式或累计关系的断言，在录制标记之外手写用例，数值先探针确认。
+   - 手写或调整后 `ctb.py check` + `ctb.py local` 直到全部通过；`ctb.py coverage` 查看全部用例合在一起的覆盖率。
+7. **调试判题、精简与复盘**
+   - 读：`methodology.md` 八节；第一次判题前读 `recording.md` 十节；有代码质量扣分时读 `framework_rules.md`"判题结果"。
+   - `ctb.py run`，阅读输出的 bug 检出表、代码质量扣分项与"命中记录"。
+   - 命中记录自动完成：每个检出的 bug 只保留耗时最短的命中用例，其余用例删除，全部用例的场景追加到 `notes/场景库.md`。
+   - 在 `notes/复盘.md` 记录本轮：得分、命中与未命中的 bug、保留的用例、核心覆盖率、矩阵缺口、推测缺口、下一轮计划；然后回到第 5 步，用新的测试名设计库中没有的更深层场景。
+   - 核心覆盖率与矩阵已不再提升、命中数连续两轮不涨时，读 `methodology.md` 十节，按其中的方法探测与设计用例。
+8. **正式提交**：检出不再提升或用户确认后，执行 `ctb.py submit --yes`。正式提交计入成绩，除非用户已明确要求，否则先征得用户同意。
+
+## 题目分析（`notes/题目分析.md`）
+
+- 用自己的话写理解结果，不复制题目原文；后续会话以它代替题目描述与源码。
+- 章节：系统概述、接口、业务规则、数值与边界、时间规则、资源与容量、未确认。
+- 接口：每个命令一条，写参数与合法范围、成功返回、每个失败返回码及其触发条件、对状态的影响。
+- 每条结论标注来源：描述、源码、探针（探针注明记录文件名）；源码得出、尚未探针确认的标"待验证"。
+- 不确定或描述与源码矛盾的点放进"未确认"，探针确认后移到对应章节。
 
 ## 硬性纪律
 
-1. 不修改 `testtool.py`、`timeout.py`、`config.properties`；`udpunittest.py` 的 `if __name__ == '__main__':` 段一个字符都不改；只使用 `MyTestCase1` 一个测试类。
+1. 不修改 `testtool.py`、`timeout.py`、`config.properties`（`udpPort` 由脚本管理）；`udpunittest.py` 的 `if __name__ == '__main__':` 段一个字符都不改；只使用 `MyTestCase1` 一个测试类。
 2. 断言优先由 `record` 从无 bug 版本录制生成；手写断言中的每个数字都必须先经探针确认，并能在 `notes/数值模型.md` 里找到来源；禁止凭感觉或只凭源码写死数值。不手工修改 `ctb-record` 标记内的内容，需要调整就改步骤后重录。
 3. 任何改动后都要重新 `check` + `local`，保持无 bug 版本全部通过；`run` / `submit` 已强制执行这两步，不要绕过。
 4. 探针通过 `ctb.py probe` 进行，不在 `answer/` 下创建文件；确需临时文件时用 `_probe*` 前缀并在用完后立即删除（`check` 会拦截残留）。
 5. 只用 Python 标准库，代码兼容 Python 3.8；单个用例必须在 300 秒内完成（`local` 会给出每个用例耗时）。
 6. 无 bug 版本运行时进程退出码可能非 0，以日志 `Ran N tests ... OK` 为准。
-7. 录制只保证用例与无 bug 版本一致，能否检出 bug 取决于步骤设计；用录制报告的命令分布与覆盖率检验步骤质量，不以"录制通过"作为完成标准。
-8. 长任务中上下文会被压缩：数值模型、探针结论、复盘结论必须写进 `notes/`，每轮开始先重读 `notes/数值模型.md` 与 `notes/复盘.md`。
+7. 自动识别结果（spec、覆盖率分层）都是草稿：spec 未审阅（`reviewed=false`）前，矩阵缺口仅供参考；分层有误时用 `notes/coverage/scope.json` 纠正，并在报告的"注意"中核对识别依据。
+8. 录制只保证用例与无 bug 版本一致，能否检出 bug 取决于步骤设计；用矩阵、覆盖率与测试贡献检验步骤质量，不以"录制通过"或"覆盖率高"作为完成标准。
+9. 长任务中上下文会被压缩：题目分析、数值模型、探针结论、复盘结论必须写进 `notes/`；恢复时按第 0 步读 `notes/` 中的结论，参考资料只重读当前步骤列出的章节。
+10. 被测程序的端口与进程由脚本管理：需要停止时用 `ctb.py stop`，不按进程名结束进程（如 `taskkill /IM java.exe`、`pkill java`），也不手工修改 `udpPort`。
+11. 命名前缀（便于与队友代码合并，`check` 强制检查）：用例方法以 `test_cjl_` 开头（步骤文件中的测试名同样如此）；`testaw.py` 中的函数、类与 `MyTestCase1` 中新增的非用例方法以 `cjl_` 开头；全局常量以 `CJL_` 或 `cjl_` 开头。
+12. 判题结果是确定的，同样的用例每次命中同样的 bug。命中保留的用例不再修改；新场景用新的测试名、写进新的生成脚本或新测试中，避免重录时改变已命中的用例（录制时会对此告警，并跳过与场景库中未命中场景步骤完全相同的测试）。
 
 ## 参考资料
 
-- `references/methodology.md`：方法论（规模锚点、多对象骨架、时间与资源排布、断言分层、复盘循环），已按本平台约束改写。
-- `references/recording.md`：步骤文件与生成脚本格式、录制断言规则、录制报告与覆盖率报告的读法、迭代方式。
-- `references/framework_rules.md`：框架铁律、文件结构、命令格式、返回码、代码质量要求。
-- `references/assertion_patterns.md`：手写用例时的 testaw 辅助函数、公式函数、非法分支写法示例。
+文件都在 `<SKILL>/references/` 下。只读需要的章节：先搜索该文件的 `^## ` 标题行得到行号，再按行号范围读取；本会话中已读过且未被压缩掉的章节不重读。
+
+| 文件 | 章节 | 内容 |
+|---|---|---|
+| `framework_rules.md` | 全文（较短） | 文件、编码约束、框架行为、用例结构、本地运行与判定、判题结果 |
+| `methodology.md` | 一、二 | 目标与衡量标准、本平台约束 |
+| | 三 | 各步骤要点（第 0 步列出需要探针确认的约束类别） |
+| | 四、五、六 | 单用例规模锚点、多对象设计骨架与时间资源排布、断言策略 |
+| | 七、八、九 | 硬性纪律、复盘循环、交付物 |
+| | 十 | 命中停滞后的深层场景探测 |
+| `recording.md` | 一、二、三 | 步骤文件、生成脚本、录制与断言生成 |
+| | 四 | 录制报告 |
+| | 五 | 接口规格 |
+| | 六 | 接口 × 返回码矩阵 |
+| | 七、八、九 | 覆盖率分层与 scope.json、未执行行定位、测试贡献 |
+| | 十 | 命中记录、用例精简与场景库 |
+| `assertion_patterns.md` | 按标题 | 手写用例的辅助函数、公式函数、数据表、非法分支、系统生成值、时钟推进写法 |
