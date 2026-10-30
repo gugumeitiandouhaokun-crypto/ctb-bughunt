@@ -47,8 +47,12 @@ python <skills目录>/ctb-bughunt/scripts/ctb.py run
 python <skills目录>/ctb-bughunt/scripts/ctb.py hits
 python <skills目录>/ctb-bughunt/scripts/ctb.py stop
 python <skills目录>/ctb-bughunt/scripts/ctb.py submit --yes
+python <skills目录>/ctb-bughunt/scripts/ctb.py wait
+python <skills目录>/ctb-bughunt/scripts/ctb.py cancel
 python <skills目录>/ctb-bughunt/scripts/ctb.py status
 ```
+
+`run`、`submit`、`local`、`coverage`、`record` 默认在后台执行，最多等待 50 秒后返回；未结束时用 `wait` 继续等待，避免命令行工具超时后模型重复执行。手动在终端使用时可加 `--fg` 前台执行。
 
 ## 目录
 
@@ -58,7 +62,7 @@ ctb-bughunt/
   references/   methodology.md  recording.md  framework_rules.md  assertion_patterns.md
   scripts/      ctb.py  decompile.py  spec.py  probe.py  record.py  matrix.py
                 jacoco_cov.py  cov_analyze.py  classfile.py  local_run.py  check_submission.py
-                dut.py  hits.py
+                dut.py  hits.py  naming.py  jobs.py
                 solftest_auto.py  get_ilearning_cookies.py  network_recorder.py
                 keep_cookies_alive.py  update_cookies_http.py
   tools/        cfr-0.152.jar  jacocoagent.jar  jacococli.jar

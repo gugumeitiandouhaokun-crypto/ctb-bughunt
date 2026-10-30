@@ -53,6 +53,10 @@
   - 运行结束后被测程序未退出时，同样按端口清理。
   - 手动停止用 `ctb.py stop`（先发 `EXIT()`，仍占用再按端口结束 java 进程）。
   - 不按进程名结束进程（如 `taskkill /IM java.exe`、`pkill java`），会误杀其他 java 程序。
+- 后台执行：`local`、`coverage`、`record`、`run`、`submit` 在后台运行，输出写入 `notes/jobs/<任务ID>.log`。
+  - 命令最多等待 50 秒，未结束时输出"后台任务进行中"；之后执行 `ctb.py wait` 读取新增输出，直到"后台任务结束"。
+  - 同一工作目录同时只运行一个后台任务，任务未结束时再次启动会被拒绝。
+  - `ctb.py cancel` 终止任务并停止被测程序。
 
 ## 判题结果
 

@@ -25,7 +25,10 @@ import dut  # noqa: E402
 CASE_LIMIT_SEC = 300
 CASE_WARN_SEC = 250
 
-RESULT_RE = re.compile(r"^(test\w*) \(([^)]*)\).*?\.\.\. ?(ok|FAIL|ERROR|skipped.*|expected failure|unexpected success)\s*$")
+STATUS = r"(ok|FAIL|ERROR|skipped.*|expected failure|unexpected success)"
+RESULT_RE = re.compile(r"^(test\w*) \(([^)]*)\).*?\.\.\. ?" + STATUS + r"\s*$")
+HEAD_RE = re.compile(r"^(test\w*) \([^)]*\)\s*$")
+TAIL_RE = re.compile(r"\.\.\. ?" + STATUS + r"\s*$")
 BLOCK_RE = re.compile(r"^(FAIL|ERROR): (test\w*) ")
 RAN_RE = re.compile(r"^Ran (\d+) tests? in ([\d.]+)s")
 FINAL_RE = re.compile(r"^(OK|FAILED)\b(.*)$")
@@ -41,12 +44,23 @@ def parse_log(text: str) -> dict:
     elapsed = None
     final = None
     lines = text.splitlines()
+    pending = None
     i = 0
     while i < len(lines):
         line = lines[i]
         m = RESULT_RE.match(line)
         if m:
             results[m.group(1)] = m.group(3)
+            pending = None
+        else:
+            m = HEAD_RE.match(line)
+            if m:
+                pending = m.group(1)
+            elif pending:
+                m = TAIL_RE.search(line)
+                if m:
+                    results[pending] = m.group(1)
+                    pending = None
         m = BLOCK_RE.match(line)
         if m:
             body: list[str] = []

@@ -26,7 +26,13 @@
   hits                    命中记录与场景库摘要
   prune                   对最近一轮判题执行精简（run --no-prune 之后用）
   stop                    停止本工作目录的被测程序（按端口查进程，不按进程名）
+  wait [--sec N]          查看后台任务进度与结果（每次最多等 N 秒，默认 50）
+  cancel                  终止后台任务并停止被测程序
   status                  查看当前进度
+
+run / submit / local / coverage / record 默认在后台执行：启动后最多等 50 秒，
+未结束就返回，之后反复执行 wait 直到显示"后台任务结束"；同一时间只允许一个后台任务。
+加 --fg 在前台执行。
 """
 from __future__ import annotations
 
@@ -48,6 +54,7 @@ import jacoco_cov as coverage_mod  # noqa: E402
 import decompile as decompile_mod  # noqa: E402
 import dut  # noqa: E402
 import hits as hits_mod  # noqa: E402
+import jobs  # noqa: E402
 import local_run  # noqa: E402
 import matrix as matrix_mod  # noqa: E402
 import probe as probe_mod  # noqa: E402
@@ -86,6 +93,7 @@ MODEL_SKELETON = """# 数值模型
 ## 时间与资源排布要点
 """
 ANALYSIS_SOURCES = ("题目描述.md", "题目补充信息.md")
+BACKGROUND = ("run", "submit", "local", "coverage", "record")
 
 REVIEW_SKELETON = """# 复盘
 
@@ -423,6 +431,10 @@ def cmd_stop(work: Work, args) -> int:
 def cmd_status(work: Work, args) -> int:
     meta = work.meta()
     print(f"工作目录：{work.root}")
+    job = jobs.current(work.notes) if work.notes.is_dir() else None
+    if job:
+        state = "运行中" if jobs.alive(job["pid"]) else "已结束，结果未查看"
+        print(f"后台任务：{jobs.describe(job)} {state}（ctb.py wait 查看）")
     print(f"题目：{meta.get('subject') or '未拉取'}  拉取时间：{meta.get('pulled_at') or '-'}")
     print(f"Cookie：{'有' if work.cookies.is_file() else '无'}")
     print(f"答题目录 jar：{[j.name for j in sorted(work.answer.glob('*.jar'))] if work.answer.is_dir() else '无'}")
@@ -457,6 +469,42 @@ def cmd_status(work: Work, args) -> int:
     return 0
 
 
+def _strip_work(raw: list[str]) -> list[str]:
+    out, skip = [], False
+    for a in raw:
+        if skip:
+            skip = False
+            continue
+        if a == "--work":
+            skip = True
+            continue
+        if a.startswith("--work="):
+            continue
+        out.append(a)
+    return out
+
+
+def _start_background(work: Work, raw: list[str]) -> int:
+    rest = _strip_work(raw)
+    job = jobs.start(work.root, work.notes, Path(__file__).resolve(), ["--work", str(work.root), *rest],
+                     " ".join(rest))
+    print(f"已在后台启动 {jobs.describe(job)}\n日志：{job['log']}\n")
+    code = jobs.wait(work.notes)
+    return 0 if code == 2 else code
+
+
+def cmd_wait(work: Work, args) -> int:
+    code = jobs.wait(work.notes, args.sec)
+    return 0 if code in (2, 3) else code
+
+
+def cmd_cancel(work: Work, args) -> int:
+    print(jobs.cancel(work.notes))
+    print(dut.stop(work.answer))
+    jobs.wait(work.notes, 1)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--work", default=".", help="题目工作目录，默认当前目录")
@@ -478,6 +526,8 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("local", "check", "run", "submit", "coverage", "record"):
         p = sub.add_parser(name)
         p.add_argument("--timeout", type=int, default=1800, help="本地验证整体超时秒数")
+        if name in BACKGROUND:
+            p.add_argument("--fg", action="store_true", help="在前台执行（默认后台执行，用 wait 查看）")
         if name == "submit":
             p.add_argument("--yes", action="store_true")
         if name in ("run", "submit"):
@@ -496,18 +546,42 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("hits")
     sub.add_parser("prune")
     sub.add_parser("stop")
+    p = sub.add_parser("wait")
+    p.add_argument("--sec", type=int, default=jobs.WAIT_SEC, help="本次最多等待秒数")
+    sub.add_parser("cancel")
     sub.add_parser("status")
 
-    args = ap.parse_args(argv)
+    raw = list(sys.argv[1:] if argv is None else argv)
+    args = ap.parse_args(raw)
     work = Work(Path(args.work))
     handler = {
         "cookies": cmd_cookies, "pull": cmd_pull, "info": cmd_info, "decompile": cmd_decompile,
         "analysis": cmd_analysis, "spec": cmd_spec, "probe": cmd_probe, "record": cmd_record,
         "matrix": cmd_matrix, "coverage": cmd_coverage, "local": cmd_local, "check": cmd_check,
         "run": cmd_run, "submit": cmd_submit, "hits": cmd_hits, "prune": cmd_prune, "stop": cmd_stop,
-        "status": cmd_status,
+        "wait": cmd_wait, "cancel": cmd_cancel, "status": cmd_status,
     }[args.command]
-    return handler(work, args)
+    if args.command == "submit" and not args.yes:
+        raise SystemExit("正式提交会计入成绩，确认后加 --yes 再执行")
+    job_id = os.environ.get(jobs.ENV_JOB)
+    if args.command in BACKGROUND and not args.fg and not job_id:
+        return _start_background(work, raw)
+    if not job_id:
+        return handler(work, args)
+    code = 1
+    try:
+        code = handler(work, args)
+    except SystemExit as exc:
+        if isinstance(exc.code, int):
+            code = exc.code
+        elif exc.code:
+            print(exc.code)
+    except Exception:  # noqa: BLE001
+        import traceback
+        traceback.print_exc()
+    finally:
+        jobs.finish_marker(work.notes, job_id, code if isinstance(code, int) else 1)
+    return code
 
 
 if __name__ == "__main__":
