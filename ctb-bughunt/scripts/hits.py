@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """判题命中记录、用例精简与场景库。
 
-判题结果中每个 bug 带有触发它的用例名。每次判题后：
+正式提交（submit）的判题结果中每个 bug 带有触发它的用例名，调试（run）的结果不含命中。每次正式提交后：
   1. 按用例统计命中的 bug，写入 notes/hits.json 的轮次记录；
   2. 每个已检出的 bug 只保留命中它且本地耗时最短的用例，其余用例（未命中、或命中的 bug 都已由更快的用例覆盖）删除；
   3. 每个用例的场景（描述、规模、命令与返回码分布、命中情况）追加到 notes/场景库.md，
@@ -283,6 +283,7 @@ def apply(answer_dir: Path, notes: Path, judge: dict, kind: str, prune: bool = T
         "time": f"{datetime.now():%Y-%m-%d %H:%M:%S}", "kind": kind, "judge_id": judge.get("judgeId"),
         "score": judge.get("score"), "passed": bug.get("passed"), "total": bug.get("total"),
         "digest": answer_digest(answer_dir), "unattributed": p["unattributed"], "remove": remove,
+        "keep": sorted(p["keep"]),
         "tests": {n: {"bugs": p["hits"][n], "seconds": info[n].get("seconds"), "fp": info[n]["fp"]} for n in names},
     }
     now = {b for t in rnd["tests"].values() for b in t["bugs"]} | set(p["unattributed"])
@@ -333,6 +334,28 @@ def prune_last(answer_dir: Path, notes: Path) -> str:
     rnd["digest_after"] = answer_digest(answer_dir)
     save(notes, data)
     return f"已删除 {len(rnd['remove'])} 个用例：{', '.join(rnd['remove'])}"
+
+
+def kept_changes(answer_dir: Path, notes: Path) -> list[str]:
+    """最近一轮命中保留的用例中，已被删除或步骤已变化的。"""
+    data = load(notes)
+    if not data["rounds"]:
+        return []
+    rnd = data["rounds"][-1]
+    removed = set(rnd.get("remove") or [])
+    keep = rnd.get("keep")
+    if keep is None:
+        keep = [n for n, t in rnd["tests"].items() if t["bugs"] and n not in removed]
+    info = describe(answer_dir, notes)
+    out = []
+    for name in keep:
+        t = rnd["tests"][name]
+        bugs = ", ".join(t["bugs"])
+        if name not in info:
+            out.append(f"{name}（已删除，命中 bug {bugs}）")
+        elif info[name]["fp"] != t["fp"]:
+            out.append(f"{name}（内容已修改，命中 bug {bugs}）")
+    return out
 
 
 def screen(notes: Path, tests: list[dict]) -> tuple[dict[str, str], list[str]]:

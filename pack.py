@@ -16,6 +16,7 @@ REQUIRED = ("SKILL.md", "scripts/ctb.py", "scripts/record.py", "scripts/jacoco_c
             "scripts/classfile.py", "scripts/spec.py", "scripts/matrix.py", "scripts/dut.py", "scripts/hits.py",
             "scripts/naming.py",
             "scripts/jobs.py",
+            "scripts/explored.py",
             "references/recording.md",
             "tools/cfr-0.152.jar", "tools/jacocoagent.jar", "tools/jacococli.jar")
 NAME_RE = re.compile(r"^name:\s*(\S+)\s*$", re.M)

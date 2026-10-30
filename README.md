@@ -1,6 +1,6 @@
 # ctb-bughunt（OpenCode skill）
 
-iLearning 软件测试实操题的找 bug 用例开发 skill，适用于任意被测业务系统：拉题、反编译无 bug jar、起草接口规格、探针、只写步骤录制真实返回生成断言、接口×返回码矩阵、分层覆盖率（核心/相关/基础设施，未执行行定位到反编译源码，录制时给出每个测试的贡献）、本地验证、调试判题、命中记录与用例精简（每个 bug 保留最快的命中用例，场景入库避免重复）、复盘、正式提交。本地被测程序自动使用工作目录专用端口，按端口而非进程名停止。题目分析固化在 `notes/题目分析.md`，新会话不必重读题目。方法论与流程见 `ctb-bughunt/SKILL.md`。
+iLearning 软件测试实操题的找 bug 用例开发 skill，适用于任意被测业务系统：拉题、反编译无 bug jar、起草接口规格、探针、只写步骤录制真实返回生成断言、接口×返回码矩阵、分层覆盖率（核心/相关/基础设施，未执行行定位到反编译源码，录制时给出每个测试的贡献）、本地验证、平台调试（只验证代码能在平台运行，不含 bug 命中）、正式提交后的命中记录与用例精简（每个 bug 保留最快的命中用例，场景入库避免重复；成绩以最后一次提交为准，每次提交的答题文件留档可恢复）、复盘。流程分基线轮与迭代轮：快速探测达到质量门槛即第一次提交，之后每轮一个主题深入探测，相对已探索范围（历次提交用例执行过的代码行与返回码）有新增才提交，自动连续迭代直到命中停滞。本地被测程序自动使用工作目录专用端口，按端口而非进程名停止。题目分析固化在 `notes/题目分析.md`，新会话不必重读题目。方法论与流程见 `ctb-bughunt/SKILL.md`。
 
 ## 打包
 
@@ -29,7 +29,7 @@ python pack.py
 
 1. 新建一个空目录作为题目工作目录，在该目录启动 opencode。
 2. 对 opencode 说："用 ctb-bughunt 做题，题目 ID 是 <ID或考试页URL>"。
-3. 模型按 SKILL.md 流程执行；也可以手动调用：
+3. 模型按 SKILL.md 流程执行，各轮之间不停下等待，命中停滞或遇到阻塞时才汇报；也可以手动调用：
 
 ```
 python <skills目录>/ctb-bughunt/scripts/ctb.py pull --subject <ID或URL>
@@ -47,6 +47,7 @@ python <skills目录>/ctb-bughunt/scripts/ctb.py run
 python <skills目录>/ctb-bughunt/scripts/ctb.py hits
 python <skills目录>/ctb-bughunt/scripts/ctb.py stop
 python <skills目录>/ctb-bughunt/scripts/ctb.py submit --yes
+python <skills目录>/ctb-bughunt/scripts/ctb.py restore
 python <skills目录>/ctb-bughunt/scripts/ctb.py wait
 python <skills目录>/ctb-bughunt/scripts/ctb.py cancel
 python <skills目录>/ctb-bughunt/scripts/ctb.py status
@@ -62,7 +63,7 @@ ctb-bughunt/
   references/   methodology.md  recording.md  framework_rules.md  assertion_patterns.md
   scripts/      ctb.py  decompile.py  spec.py  probe.py  record.py  matrix.py
                 jacoco_cov.py  cov_analyze.py  classfile.py  local_run.py  check_submission.py
-                dut.py  hits.py  naming.py  jobs.py
+                dut.py  hits.py  naming.py  jobs.py  explored.py
                 solftest_auto.py  get_ilearning_cookies.py  network_recorder.py
                 keep_cookies_alive.py  update_cookies_http.py
   tools/        cfr-0.152.jar  jacocoagent.jar  jacococli.jar

@@ -5,7 +5,7 @@
   cookies.json   iLearning 登录 Cookie
   answer/        pull 下来的题目描述、框架、jar、testaw.py、udpunittest.py（提交的就是这里的文件）
   decompiled/    反编译源码 src/ 与 index.md
-  notes/         ctb.json、pristine/（pull 原件）、题目分析.md、数值模型.md、复盘.md、场景库.md、hits.json、
+  notes/         ctb.json、pristine/（pull 原件）、题目分析.md、数值模型.md、复盘.md、场景库.md、hits.json、explored.json、submits/、
                  spec.json、matrix.md、probes/、steps/、record/、coverage/（含 scope.json）、judge/、local_last.*
 
 子命令：
@@ -21,10 +21,14 @@
   coverage                带 JaCoCo 跑一次 local，输出分层覆盖率
   local                   本地对无 bug 程序跑 udpunittest.py
   check                   提交前规范检查
-  run [--no-prune]        check + local 通过后调试（type=2），记录判题结果与命中，删除未命中/被替代的用例
-  submit --yes            check + local 通过后正式提交（type=1），同样记录命中并精简
+  run                     check + 带覆盖率的 local 通过后调试（type=2）：只验证平台能否正常运行，不含 bug 命中；
+                          打印本版本相对已探索范围的新增
+  submit --yes            正式提交（type=1，成绩以最后一次为准）：要求当前答题文件已 run 过、相对已探索有新增
+                          （否则需 --reason 说明新场景维度）；记录命中，删除未命中/被替代的用例（--no-prune 只记录），
+                          答题文件存到 notes/submits/，覆盖行与返回码并入 notes/explored.json
   hits                    命中记录与场景库摘要
-  prune                   对最近一轮判题执行精简（run --no-prune 之后用）
+  prune                   对最近一轮提交执行精简（submit --no-prune 之后用）
+  restore [--name N]      恢复某次提交时的答题文件（默认检出最多的一次）
   stop                    停止本工作目录的被测程序（按端口查进程，不按进程名）
   wait [--sec N]          查看后台任务进度与结果（每次最多等 N 秒，默认 50）
   cancel                  终止后台任务并停止被测程序
@@ -53,6 +57,7 @@ import check_submission  # noqa: E402
 import jacoco_cov as coverage_mod  # noqa: E402
 import decompile as decompile_mod  # noqa: E402
 import dut  # noqa: E402
+import explored as explored_mod  # noqa: E402
 import hits as hits_mod  # noqa: E402
 import jobs  # noqa: E402
 import local_run  # noqa: E402
@@ -350,6 +355,39 @@ def _gate(work: Work, args) -> bool:
     return True
 
 
+def _gate_with_coverage(work: Work, args) -> tuple[bool, dict | None]:
+    """check + 带 JaCoCo 的 local；覆盖率统计失败不影响判定，只是没有覆盖数据。"""
+    print("== 规范检查 ==")
+    if cmd_check(work, args) != 0:
+        print("规范检查未通过，已停止")
+        return False, None
+    print("\n== 本地验证（无 bug 版本必须全部通过，同时统计覆盖率）==")
+    jar = _single_jar(work)
+    exec_path = work.notes / "coverage" / f"run_{datetime.now():%Y%m%d_%H%M%S}.exec"
+    try:
+        env = coverage_mod.agent_env(exec_path)
+    except SystemExit as exc:
+        print(f"无法统计覆盖率：{exc}")
+        env = None
+    rep = local_run.run_local(work.answer, work.notes, args.timeout, env)
+    print(rep["report"])
+    if not rep["ok"]:
+        print("本地验证未全部通过，已停止")
+        return False, None
+    if env is None:
+        return True, None
+    print("\n== 覆盖率 ==")
+    try:
+        return True, coverage_mod.report(exec_path, jar, work.notes / "coverage", "run", _coverage_ctx(work))
+    except SystemExit as exc:
+        print(f"覆盖率统计失败：{exc}")
+        return True, None
+
+
+def _code_pattern(work: Work) -> str:
+    return (spec_mod.load(work.notes / "spec.json") or {}).get("code_pattern") or ""
+
+
 def _collect_judge(work: Work, kind: str) -> dict | None:
     jdir = work.notes / "judge"
     jdir.mkdir(parents=True, exist_ok=True)
@@ -364,10 +402,11 @@ def _collect_judge(work: Work, kind: str) -> dict | None:
     bug = data.get("bugDetect") or {}
     missed = [str(i.get("bugId")) for i in bug.get("items") or [] if not i.get("detected")]
     deductions = [f"{c.get('checkItem')}={c.get('number')}" for c in data.get("codeQualityDeductions") or []]
+    detect = (f"检出={bug.get('passed', '?')}/{bug.get('total', '?')} 未检出={','.join(missed) or '无'} "
+              if bug.get("items") else "")
     line = (f"- {datetime.now():%Y-%m-%d %H:%M:%S} {kind} judgeId={data.get('judgeId')} "
             f"score={data.get('score')} result={data.get('judgeResult')} "
-            f"检出={bug.get('passed', '?')}/{bug.get('total', '?')} "
-            f"未检出={','.join(missed) or '无'} 扣分项={';'.join(deductions) or '无'}")
+            f"{detect}扣分项={';'.join(deductions) or '无'}")
     with (jdir / "history.md").open("a", encoding="utf-8") as f:
         f.write(line + "\n")
     print(f"\n判题结果已移到 {jdir}，摘要追加到 history.md：\n{line}")
@@ -383,22 +422,140 @@ def _record_hits(work: Work, judge: dict | None, kind: str, prune: bool) -> None
 
 def cmd_run(work: Work, args) -> int:
     subject = work.subject()
-    if not _gate(work, args):
+    ok, cov = _gate_with_coverage(work, args)
+    if not ok:
         return 1
+    digest = hits_mod.answer_digest(work.answer)
+    if cov is not None:
+        codes = explored_mod.codes_of(work.answer, work.notes, _code_pattern(work))
+        explored_mod.save_answer(work.notes, digest, cov["lines"], codes)
+        explored = explored_mod.load(work.notes)
+        if explored["submits"]:
+            nov = explored_mod.novelty(explored, cov["lines"], codes)
+            print(f"\n本版本相对已探索：{explored_mod.describe_novelty(nov)}")
+            if not explored_mod.is_new(nov):
+                print("没有新增：正式提交会被拒绝。换主题补新场景；只有确实用了新的场景维度时才用 submit --reason 说明后提交")
+    print("\n== 平台调试 ==")
     code = _solftest(work, "run", subject)
-    _record_hits(work, _collect_judge(work, "run"), "run", not args.no_prune)
+    judge = _collect_judge(work, "run")
+    print("\n调试只验证答题代码能否在平台正常运行（语法、导入、框架、超时、代码质量），不给出 bug 命中；"
+          "命中结果在 ctb.py submit --yes 之后查看。")
+    if code == 0 and judge is not None:
+        meta = work.meta()
+        meta["last_run"] = {"digest": digest, "at": f"{datetime.now():%Y-%m-%d %H:%M:%S}",
+                            "result": judge.get("judgeResult")}
+        work.save_meta(meta)
+        print(f"判题状态：{judge.get('judgeResult')}。平台运行正常则直接 ctb.py submit --yes；"
+              "有报错或扣分项先修复，再 check、local、run。")
     return code
+
+
+def _submits_dir(work: Work) -> Path:
+    return work.notes / "submits"
+
+
+def _submit_history(work: Work) -> list[dict]:
+    out = []
+    root = _submits_dir(work)
+    for d in sorted(root.iterdir()) if root.is_dir() else []:
+        meta = d / "meta.json"
+        if meta.is_file():
+            info = json.loads(meta.read_text(encoding="utf-8"))
+            info["name"] = d.name
+            out.append(info)
+    return out
+
+
+def _best_submit(history: list[dict]) -> dict | None:
+    done = [h for h in history if h.get("passed") is not None]
+    return max(done, key=lambda h: (h["passed"], h["name"])) if done else None
+
+
+def _snapshot(work: Work) -> Path:
+    dest = _submits_dir(work) / f"{datetime.now():%Y%m%d_%H%M%S}"
+    dest.mkdir(parents=True, exist_ok=True)
+    for name in ("testaw.py", "udpunittest.py"):
+        shutil.copy2(work.answer / name, dest / name)
+    return dest
 
 
 def cmd_submit(work: Work, args) -> int:
-    if not args.yes:
-        raise SystemExit("正式提交会计入成绩，确认后加 --yes 再执行")
     subject = work.subject()
-    if not _gate(work, args):
+    digest = hits_mod.answer_digest(work.answer)
+    last_run = work.meta().get("last_run") or {}
+    if last_run.get("digest") != digest:
+        print("答题文件还没有调试过（或调试后有改动）：先 ctb.py run，确认平台运行正常后再正式提交")
         return 1
+    restored = work.meta().get("restored_digest") == digest
+    changed = [] if restored else hits_mod.kept_changes(work.answer, work.notes)
+    if changed and not args.force:
+        print("上一轮命中保留的用例被删除或修改，成绩以最后一次提交为准，提交会丢失这些 bug：")
+        print("\n".join(f"  {c}" for c in changed))
+        print("恢复这些用例（ctb.py restore 可取回提交时的答题文件）后重新 run；确需提交加 --force")
+        return 1
+    print(f"答题文件与 {last_run.get('at')} 调试的版本一致，跳过 check + local")
+    explored = explored_mod.load(work.notes)
+    cur = explored_mod.load_answer(work.notes, digest)
+    nov = explored_mod.novelty(explored, cur["lines"], cur["codes"]) if cur else None
+    reason = (args.reason or "").strip()
+    if explored["submits"] and not restored:
+        if nov is None:
+            print("没有当前答题文件的覆盖率记录（run 时覆盖率统计失败），无法判断相对已探索的新增")
+        else:
+            print(f"相对已探索：{explored_mod.describe_novelty(nov)}")
+        if (nov is None or not explored_mod.is_new(nov)) and not reason:
+            print("没有新增，不提交：换主题补新场景；确实用了新的场景维度（数值边界、累计跨阈值、状态顺序等）"
+                  "时加 --reason \"<维度说明>\"")
+            return 1
+        if reason:
+            print(f"提交理由：{reason}")
+    history = _submit_history(work)
+    best = _best_submit(history)
+    snap = _snapshot(work)
     code = _solftest(work, "submit", subject)
-    _record_hits(work, _collect_judge(work, "submit"), "submit", not args.no_prune)
+    judge = _collect_judge(work, "submit")
+    bug = (judge or {}).get("bugDetect") or {}
+    meta = {"at": f"{datetime.now():%Y-%m-%d %H:%M:%S}", "digest": digest,
+            "judge_id": (judge or {}).get("judgeId"), "score": (judge or {}).get("score"),
+            "passed": bug.get("passed"), "total": bug.get("total"), "novelty": nov, "reason": reason}
+    (snap / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"\n提交时的答题文件已保存到 {snap}")
+    if judge is not None:
+        explored_mod.merge(work.notes, cur["lines"] if cur else {}, cur["codes"] if cur else [], snap.name)
+        print(f"已探索范围已更新：{explored_mod.summary(work.notes)}")
+    if best and meta["passed"] is not None and meta["passed"] < best["passed"]:
+        print(f"\n注意：本次检出 {meta['passed']} 个，少于 {best['name']} 那次的 {best['passed']} 个，"
+              f"而成绩以最后一次提交为准。执行 ctb.py restore 恢复那次的答题文件，再 run、submit --yes。")
+    _record_hits(work, judge, "submit", not args.no_prune)
     return code
+
+
+def cmd_restore(work: Work, args) -> int:
+    history = _submit_history(work)
+    if not history:
+        print("还没有正式提交记录")
+        return 1
+    if args.name:
+        pick = next((h for h in history if h["name"] == args.name), None)
+        if pick is None:
+            print(f"没有提交记录 {args.name}，可选：{', '.join(h['name'] for h in history)}")
+            return 1
+    else:
+        pick = _best_submit(history)
+        if pick is None:
+            print("提交记录都没有检出结果")
+            return 1
+    src = _submits_dir(work) / pick["name"]
+    for name in ("testaw.py", "udpunittest.py"):
+        shutil.copy2(src / name, work.answer / name)
+    meta = work.meta()
+    meta["restored_digest"] = hits_mod.answer_digest(work.answer)
+    work.save_meta(meta)
+    print(f"已恢复 {pick['name']} 提交时的答题文件（检出 {pick.get('passed')}/{pick.get('total')}）")
+    for h in history:
+        print(f"  {h['name']}: 检出 {h.get('passed')}/{h.get('total')} 得分 {h.get('score')}")
+    print("接着执行 ctb.py run，平台运行正常后 ctb.py submit --yes")
+    return 0
 
 
 def cmd_hits(work: Work, args) -> int:
@@ -465,6 +622,22 @@ def cmd_status(work: Work, args) -> int:
     if hist.is_file():
         lines = [l for l in hist.read_text(encoding="utf-8").splitlines() if l.strip()]
         print("最近一次判题：" + (lines[-1] if lines else "-"))
+    last_run = meta.get("last_run")
+    if last_run and work.answer.is_dir():
+        same = last_run.get("digest") == hits_mod.answer_digest(work.answer)
+        print(f"最近一次调试：{last_run.get('at')} {last_run.get('result')}，"
+              + ("当前答题文件就是调试的版本，可以 submit --yes" if same else "之后答题文件有改动，提交前需重新 run"))
+    history = _submit_history(work)
+    print(f"轮次：当前第 {len(history) + 1} 轮（{'基线轮' if not history else '迭代轮'}，已正式提交 {len(history)} 次）")
+    if history:
+        best = _best_submit(history)
+        last = history[-1]
+        print(f"正式提交：最近 {last['name']} 检出 {last.get('passed')}/{last.get('total')}"
+              + (f"，最多 {best['name']} 检出 {best['passed']}" if best else ""))
+        if last.get("novelty"):
+            print(f"最近一次提交相对已探索：{explored_mod.describe_novelty(last['novelty'])}"
+                  + (f"；理由：{last['reason']}" if last.get("reason") else ""))
+    print("已探索范围：" + explored_mod.summary(work.notes))
     print("命中：" + hits_mod.summary(work.notes))
     return 0
 
@@ -530,8 +703,9 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--fg", action="store_true", help="在前台执行（默认后台执行，用 wait 查看）")
         if name == "submit":
             p.add_argument("--yes", action="store_true")
-        if name in ("run", "submit"):
             p.add_argument("--no-prune", action="store_true", help="只记录命中，不删除用例")
+            p.add_argument("--force", action="store_true", help="上一轮命中保留的用例被删除或修改时仍然提交")
+            p.add_argument("--reason", default="", help="相对已探索没有新增覆盖与返回码时，说明本轮新的场景维度")
         if name == "record":
             p.add_argument("-f", "--file", default=None, help="步骤文件")
             p.add_argument("--gen", default=None, help="生成脚本，其 stdout 即步骤")
@@ -545,6 +719,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--done", action="store_true", help="分析已写完，记录对应的题目与 jar 指纹")
     sub.add_parser("hits")
     sub.add_parser("prune")
+    p = sub.add_parser("restore")
+    p.add_argument("--name", default=None, help="提交记录名（notes/submits/ 下的目录名），默认检出最多的一次")
     sub.add_parser("stop")
     p = sub.add_parser("wait")
     p.add_argument("--sec", type=int, default=jobs.WAIT_SEC, help="本次最多等待秒数")
@@ -558,7 +734,7 @@ def main(argv: list[str] | None = None) -> int:
         "cookies": cmd_cookies, "pull": cmd_pull, "info": cmd_info, "decompile": cmd_decompile,
         "analysis": cmd_analysis, "spec": cmd_spec, "probe": cmd_probe, "record": cmd_record,
         "matrix": cmd_matrix, "coverage": cmd_coverage, "local": cmd_local, "check": cmd_check,
-        "run": cmd_run, "submit": cmd_submit, "hits": cmd_hits, "prune": cmd_prune, "stop": cmd_stop,
+        "run": cmd_run, "submit": cmd_submit, "hits": cmd_hits, "prune": cmd_prune, "restore": cmd_restore, "stop": cmd_stop,
         "wait": cmd_wait, "cancel": cmd_cancel, "status": cmd_status,
     }[args.command]
     if args.command == "submit" and not args.yes:

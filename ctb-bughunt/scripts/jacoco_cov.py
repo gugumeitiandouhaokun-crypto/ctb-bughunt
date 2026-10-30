@@ -30,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cov_analyze as ca  # noqa: E402
+import explored as ex  # noqa: E402
 from decompile import is_lib  # noqa: E402
 
 TOOLS = Path(__file__).resolve().parent.parent / "tools"
@@ -225,11 +226,18 @@ def _method_label(cname: str, m: dict) -> str:
     return f"{ca.simple(cname)}.{m['name']}{m['desc']}" + (f" L{m['line']}" if m["line"] else "")
 
 
-def _gap_lines(model: dict, cname: str, m: dict, lines: list[int], loc: ca.Locator) -> list[str]:
+def _explored_line(model: dict, cname: str, n: int, need_cb: int, seen: dict) -> bool:
+    key = ex.line_key(model["classes"][cname]["source"], n)
+    return key in seen and seen[key] >= need_cb
+
+
+def _gap_lines(model: dict, cname: str, m: dict, lines: list[int], loc: ca.Locator, seen: dict) -> list[str]:
     missed, branches = ca.method_gaps(model, cname, lines)
     out = []
-    items = [(n, "未执行") for n in missed] + [(n, f"缺 {mb}/{tot} 分支") for n, mb, tot in branches]
-    for n, what in sorted(items)[:MAX_LINES_PER_METHOD]:
+    items = [(_explored_line(model, cname, n, 0, seen), n, "未执行") for n in missed]
+    items += [(_explored_line(model, cname, n, tot, seen), n, f"缺 {mb}/{tot} 分支") for n, mb, tot in branches]
+    for done, n, what in sorted(items)[:MAX_LINES_PER_METHOD]:
+        what += "（已探索：历次提交的用例执行过）" if done else ""
         hit = loc.locate(cname, m["name"], m["desc"], n)
         if hit:
             out.append(f"  - L{n} {what} → :{hit[0]} `{hit[1][:120]}`")
@@ -242,7 +250,8 @@ def _gap_lines(model: dict, cname: str, m: dict, lines: list[int], loc: ca.Locat
 
 
 def render(source: str, model: dict, tiers: dict, notes: list[str], prev: dict | None,
-           loc: ca.Locator, src: ca.SourceIndex, contrib: list[dict] | None, errors: list[str]) -> tuple[str, dict]:
+           loc: ca.Locator, src: ca.SourceIndex, contrib: list[dict] | None, errors: list[str],
+           seen: dict, nov: dict | None) -> tuple[str, dict]:
     core_t = ca.totals(model, tiers, {ca.CORE})
     rel_t = ca.totals(model, tiers, {ca.RELATED})
     infra_t = ca.totals(model, tiers, {ca.INFRA})
@@ -258,14 +267,17 @@ def render(source: str, model: dict, tiers: dict, notes: list[str], prev: dict |
     out.append(f"- 主指标 {main_label}（{counts[ca.CORE]} 类）：" + "，".join(head))
     out.append(f"- 相关（{counts[ca.RELATED]} 类）：" + "，".join(f"{LABELS[k]} {_pct(rel_t[k])}" for k in COUNTERS))
     out.append(f"- 基础设施（{counts[ca.INFRA]} 类，不计入主指标）：行 {_pct(infra_t['LINE'])}")
+    if nov is not None:
+        out.append(f"- 相对已探索（核心+相关，历次正式提交的用例执行过的行）：{ex.describe_novelty(nov)}")
     out += [f"- 注意：{n}" for n in notes + errors]
 
     if contrib:
         out += ["", "## 测试贡献（核心+相关，已扣除启动基线）", "",
-                "| 测试 | 覆盖行 | 独有行 | 按顺序新增分支 | 备注 |", "|---|---|---|---|---|"]
+                "| 测试 | 覆盖行 | 独有行 | 按顺序新增分支 | 相对已探索新增行 | 备注 |", "|---|---|---|---|---|---|"]
         for r in contrib:
             note = "冗余候选：没有独有行" if r["unique"] == 0 and len(contrib) > 1 else ""
-            out.append(f"| {r['test']} | {r['lines']} | {r['unique']} | {r['new_branches']} | {note} |")
+            fresh = r.get("fresh", "-") if seen else "-"
+            out.append(f"| {r['test']} | {r['lines']} | {r['unique']} | {r['new_branches']} | {fresh} | {note} |")
 
     shown = sorted((c for c in model["classes"] if tiers[c][0] in WANTED),
                    key=lambda c: (tiers[c][0] != ca.CORE, -(sum(model["classes"][c]["c"].get("LINE", (0, 0))) - model["classes"][c]["c"].get("LINE", (0, 0))[0])))
@@ -297,15 +309,20 @@ def render(source: str, model: dict, tiers: dict, notes: list[str], prev: dict |
         decl = loc.decl_line(c, m["name"])
         where = f"  → {src.path(c).relative_to(src.src_dir).as_posix()}:{decl}" if decl else ""
         out.append(f"- [{tiers[c][0]}] {_method_label(c, m)}  行 {_pct((lc, lt))}  分支 {_pct((bc, bt))}{where}")
-        out += _gap_lines(model, c, m, ranges.get((c, m["name"], m["desc"]), []), loc)
+        out += _gap_lines(model, c, m, ranges.get((c, m["name"], m["desc"]), []), loc, seen)
     if not partial:
         out.append("无")
 
+    def _done(c, m) -> bool:
+        return any(_explored_line(model, c, n, 0, seen) for n in ranges.get((c, m["name"], m["desc"]), []))
+
+    unexec.sort(key=lambda x: _done(*x))
     out += ["", f"## 未执行的方法（{len(unexec)} 个）", ""]
     for c, m in unexec[:MAX_METHODS * 2]:
         decl = loc.decl_line(c, m["name"])
         where = f"  → {src.path(c).relative_to(src.src_dir).as_posix()}:{decl}" if decl else ""
-        out.append(f"- [{tiers[c][0]}] {_method_label(c, m)}{where}")
+        mark = "（已探索：历次提交的用例执行过）" if _done(c, m) else ""
+        out.append(f"- [{tiers[c][0]}] {_method_label(c, m)}{mark}{where}")
     if not unexec:
         out.append("无")
 
@@ -344,7 +361,14 @@ def report(exec_path: Path | None, jar: Path, out_dir: Path, source: str, ctx: C
 
     src = ca.SourceIndex(ctx.src_dir)
     tiers, notes = ca.classify(model, ctx.commands, src, ca.load_scope(ctx.scope_path), started)
+    explored = ex.load(out_dir.parent)
+    seen = explored["lines"] if explored["submits"] else {}
+    cur_lines = ex.lines_of(model, tiers)
+    nov = {**ex.novelty(explored, cur_lines, []), "codes": None} if explored["submits"] else None
     contrib = ca.per_test_stats(base_model, test_models, tiers, WANTED) if test_models else None
+    if contrib and seen:
+        for r, (_, m) in zip(contrib, test_models):
+            r["fresh"] = sum(1 for k in ex.lines_of(m, tiers) if k not in seen)
     loc = ca.Locator(src, classes_dir)
 
     last_path = out_dir / "last.json"
@@ -352,7 +376,8 @@ def report(exec_path: Path | None, jar: Path, out_dir: Path, source: str, ctx: C
     if not isinstance(last_all, dict) or any(not isinstance(v, dict) or "LINE" not in v for v in last_all.values()):
         last_all = {}
     prev = last_all.get(source)
-    md, info = render(source, model, tiers, notes, prev, loc, src, contrib, session.errors if session else [])
+    md, info = render(source, model, tiers, notes, prev, loc, src, contrib, session.errors if session else [],
+                      seen, nov)
     md_path = out_dir / f"{stamp}.md"
     md_path.write_text(md, encoding="utf-8")
     last_all[source] = info["rates"]
@@ -368,15 +393,18 @@ def report(exec_path: Path | None, jar: Path, out_dir: Path, source: str, ctx: C
         f.write(line + "\n")
     print(line.lstrip("- "))
     print(f"部分覆盖方法 {info['partial']} 个，未执行方法 {info['unexec']} 个（核心+相关）")
+    if nov is not None:
+        print(f"相对已探索：{ex.describe_novelty(nov)}")
     if contrib:
         redundant = [r["test"] for r in contrib if r["unique"] == 0 and len(contrib) > 1]
-        print("测试贡献：" + "，".join(f"{r['test']} 行{r['lines']}/独有{r['unique']}" for r in contrib))
+        print("测试贡献：" + "，".join(f"{r['test']} 行{r['lines']}/独有{r['unique']}"
+                                   + (f"/相对已探索新增{r['fresh']}" if "fresh" in r else "") for r in contrib))
         if redundant:
             print("冗余候选（没有独有行）：" + "，".join(redundant))
     for n in notes + (session.errors if session else []):
         print(f"注意：{n}")
     print(f"报告：{md_path}")
-    return {"md": md_path, "line": line, "tiers": tiers, "contrib": contrib}
+    return {"md": md_path, "line": line, "tiers": tiers, "contrib": contrib, "lines": cur_lines, "novelty": nov}
 
 
 def main(argv: list[str] | None = None) -> int:
