@@ -62,7 +62,7 @@ class NoReply(RuntimeError):
 def q(v) -> str:
     if isinstance(v, (int, float)) and not isinstance(v, bool):
         return str(v)
-    return "'" + str(v).replace('\\', '\\\\').replace("'", "\\'") + "'"
+    return "'" + str(v).replace('\\', '\\\\').replace("'", "\\'").replace('\t', '\\t').replace('\u3000', '\\u3000') + "'"
 
 
 class Rec:
