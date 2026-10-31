@@ -1,0 +1,19 @@
+test_cjl_cy01_reserve_expire_boundary (__main__.MyTestCase1.test_cjl_cy01_reserve_expire_boundary) ... ok
+test_cjl_cy02_reserved_car_enters_never_parks (__main__.MyTestCase1.test_cjl_cy02_reserved_car_enters_never_parks) ... ok
+test_cjl_cy03_reserve_large_space_diff_fee (__main__.MyTestCase1.test_cjl_cy03_reserve_large_space_diff_fee) ... ok
+test_cjl_cy04_reserve_then_blacklist_and_unbind (__main__.MyTestCase1.test_cjl_cy04_reserve_then_blacklist_and_unbind) ... ok
+test_cjl_cy05_reserve_occupied_or_wash_bay (__main__.MyTestCase1.test_cjl_cy05_reserve_occupied_or_wash_bay) ... ok
+test_cjl_cy06_take_order_hour_boundaries (__main__.MyTestCase1.test_cjl_cy06_take_order_hour_boundaries) ... ok
+test_cjl_cy07_illegal_wash_transitions (__main__.MyTestCase1.test_cjl_cy07_illegal_wash_transitions) ... ok
+test_cjl_cy08_cancel_600s_boundary_fee (__main__.MyTestCase1.test_cjl_cy08_cancel_600s_boundary_fee) ... ok
+test_cjl_cy09_balance_stage1_ws_internal (__main__.MyTestCase1.test_cjl_cy09_balance_stage1_ws_internal) ... ok
+test_cjl_cy10_balance_stage3_ws_overflow (__main__.MyTestCase1.test_cjl_cy10_balance_stage3_ws_overflow) ... ok
+test_cjl_cy11_balance_stage2_wl_backfill (__main__.MyTestCase1.test_cjl_cy11_balance_stage2_wl_backfill) ... ok
+test_cjl_cy12_wash_status_after_close_and_next_day (__main__.MyTestCase1.test_cjl_cy12_wash_status_after_close_and_next_day) ... ok
+test_cjl_cy13_reserved_car_wash_and_cancel_reserve (__main__.MyTestCase1.test_cjl_cy13_reserved_car_wash_and_cancel_reserve) ... ok
+test_cjl_cy14_reserve_full_lot_entry (__main__.MyTestCase1.test_cjl_cy14_reserve_full_lot_entry) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 20.464s
+
+OK

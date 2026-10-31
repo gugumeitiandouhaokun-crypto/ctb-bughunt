@@ -1,0 +1,14 @@
+[CASE COST]__main__.MyTestCase1.test_cjl_cy01_reserve_expire_boundary[TIME]0.9592232704162598
+[CASE COST]__main__.MyTestCase1.test_cjl_cy02_reserved_car_enters_never_parks[TIME]0.8385014533996582
+[CASE COST]__main__.MyTestCase1.test_cjl_cy03_reserve_large_space_diff_fee[TIME]0.6902744770050049
+[CASE COST]__main__.MyTestCase1.test_cjl_cy04_reserve_then_blacklist_and_unbind[TIME]0.8415026664733887
+[CASE COST]__main__.MyTestCase1.test_cjl_cy05_reserve_occupied_or_wash_bay[TIME]0.6617646217346191
+[CASE COST]__main__.MyTestCase1.test_cjl_cy06_take_order_hour_boundaries[TIME]1.020512580871582
+[CASE COST]__main__.MyTestCase1.test_cjl_cy07_illegal_wash_transitions[TIME]1.0531651973724365
+[CASE COST]__main__.MyTestCase1.test_cjl_cy08_cancel_600s_boundary_fee[TIME]1.1448075771331787
+[CASE COST]__main__.MyTestCase1.test_cjl_cy09_balance_stage1_ws_internal[TIME]1.592010736465454
+[CASE COST]__main__.MyTestCase1.test_cjl_cy10_balance_stage3_ws_overflow[TIME]2.2603025436401367
+[CASE COST]__main__.MyTestCase1.test_cjl_cy11_balance_stage2_wl_backfill[TIME]2.048043966293335
+[CASE COST]__main__.MyTestCase1.test_cjl_cy12_wash_status_after_close_and_next_day[TIME]1.565788745880127
+[CASE COST]__main__.MyTestCase1.test_cjl_cy13_reserved_car_wash_and_cancel_reserve[TIME]0.8746786117553711
+[CASE COST]__main__.MyTestCase1.test_cjl_cy14_reserve_full_lot_entry[TIME]1.2062342166900635

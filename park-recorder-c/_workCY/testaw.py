@@ -1,0 +1,457 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+from testtool import tool
+import re
+
+
+# 自定义的AW请写作这个文件中
+
+def cjl_init_service():
+    return tool.send_cmd('init()')
+
+
+def cjl_run_turns(times=1):
+    for i in range(times):
+        tool.send_cmd('init()')
+
+
+rS = 'E000:Success'
+rF = 'E001:Fail'
+rL = 'E002:Locked'
+SP = {
+    'E001:Fail': 'rF',
+    'E000:Success': 'rS',
+    'E002:Locked': 'rL',
+}
+
+
+class cjl_CommonUtil:
+    """
+    通用的命令下发AW，提供normal、ret_id两种模式，供cjl_Aw方法使用
+    """
+
+    JUDGEMENT_FLAG = True
+    CALCBASE = 10
+    TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
+    RECORD_FAIL_FLAG = True
+    TC_Start = []
+    TC_End = []
+    CASE_ID = 0
+
+    @staticmethod
+    def next_testcase(name):
+        cjl_CommonUtil.CASE_ID += 1
+        cjl_CommonUtil.add_context(
+            f"    def test_{name}(self):",
+            "        cjl_init_service()",
+        )
+
+    @staticmethod
+    def add_context(*context):
+        for s in context:
+            if not s.endswith('\n'):
+                s += '\n'
+            cjl_CommonUtil.TC_Start.append(s)
+
+    @staticmethod
+    def _add_aw_context(cmd, ret, aw_name='', *args):
+        if not cjl_CommonUtil.RECORD_FAIL_FLAG and ret == rF:
+            return
+        if ret in SP:
+            ret = SP[ret]
+        else:
+            ret = f"'{ret}'"
+        cmd = aw_name if aw_name else cmd
+        def fmt_arg(x):
+            if isinstance(x, (int, float)):
+                return str(x)
+            return f"'{x}'"
+        args_list = [fmt_arg(x) for x in args]
+        args_str = f'{",".join(args_list)}, ' if args_list else ''
+        context = f'''        aw.{cmd}({args_str}expects={ret})'''
+        cjl_CommonUtil.add_context(context)
+
+    @staticmethod
+    def send_cmd(cmd, *args, **kwargs):
+        full_cmd = f'{cmd}({",".join([str(x) for x in args])})'
+        ret = tool.send_cmd(full_cmd).replace('\n', '')
+        return ret
+
+    @staticmethod
+    def send_cmd_normal(cmd: str, *args, aw_name='', **expects):
+        """
+        适合入参范围明确、返回值固定的函数，全等比较
+        """
+        ret = cjl_CommonUtil.send_cmd(cmd, *args)
+        if not cjl_CommonUtil.JUDGEMENT_FLAG:
+            cjl_CommonUtil._add_aw_context(cmd, ret, aw_name if aw_name else 'cjl_' + cmd, *args)
+        else:
+            if 'expects' not in expects or expects['expects'] == '':
+                raise ValueError(
+                    f'JUDGEMENT_FLAG=True but expects not provided for: {cmd}({args})')
+            expect_value = expects['expects']
+            assert ret == expect_value, \
+                f'cmd={cmd}({args}), expected={expect_value!r}, actual={ret!r}'
+        return ret
+
+    @staticmethod
+    def send_cmd_ret_id(cmd: str, *args, aw_name='', **expects):
+        """
+        适合返回值带动态ID，ID值不做全等校验、只比前5字符
+        """
+        ret = cjl_CommonUtil.send_cmd(cmd, *args)
+        if not cjl_CommonUtil.JUDGEMENT_FLAG:
+            cjl_CommonUtil._add_aw_context(cmd, ret, aw_name if aw_name else 'cjl_' + cmd, *args)
+        else:
+            if 'expects' not in expects or expects['expects'] == '':
+                raise ValueError(
+                    f'JUDGEMENT_FLAG=True but expects not provided for: {cmd}({args})')
+            expect_value = expects['expects']
+            if expect_value in SP:
+                assert ret == expect_value, \
+                    f'cmd={cmd}({args}), expected={expect_value!r}, actual={ret!r}'
+            else:
+                assert ret[:5] == expect_value[:5], \
+                    f'cmd={cmd}({args}), expected_prefix={expect_value[:5]!r}, actual_prefix={ret[:5]!r}, full_actual={ret!r}'
+        return ret
+
+
+class cjl_Aw:
+    """智慧园区停车场系统(B版本) AW封装
+
+    在A版本基础上新增：
+      - 黑名单：add_blacklist / del_blacklist
+      - 账户充值：recharge_account
+      - 余额转让：transfer_account
+      - 月卡：purchase_moncard / transfer_moncard
+      - 账单结算：pay_parkcost
+      - 查询资产：query_account_asset
+      - 检查接口：check_occupied_spaces / check_park_statistics / check_revenue
+    变更：
+      - occupy_park 新增 space_id 参数
+
+    C版本新增：
+      - 车位预约：reserve_space / cancel_reserve / check_reserve_status / query_reserve
+      - 洗车服务：take_wash_order / cancel_wash_order / query_wash_status / start_wash_service /
+        end_wash_service / trigger_wash_balance / query_wash_queue
+    变更：
+      - check_park_statistics 每类车位为 占用|锁定|预约 三段
+    """
+
+    map_member = {}
+    map_code = {}
+    map_session = {}
+    map_reserve = {}
+
+    @staticmethod
+    def _extract_field(text, prefix, suffix=''):
+        """从text中提取prefix和suffix之间的内容"""
+        start = text.find(prefix)
+        if start == -1:
+            return None
+        start += len(prefix)
+        if suffix:
+            end = text.find(suffix, start)
+            if end == -1:
+                return text[start:]
+            return text[start:end]
+        return text[start:]
+
+    @staticmethod
+    def _bind(table, recorded, actual, what):
+        """录制值到实际值的映射：已出现的录制值必须对应同一实际值，新录制值不能对应已用过的实际值"""
+        if recorded in table:
+            assert table[recorded] == actual, \
+                f'{what}: recorded={recorded!r} mapped={table[recorded]!r}, actual={actual!r}'
+        else:
+            assert actual not in table.values(), \
+                f'{what}: recorded={recorded!r} is new but actual={actual!r} already used'
+            table[recorded] = actual
+
+    @staticmethod
+    def init(expects=rS):
+        maps = [i for i in cjl_Aw.__dict__ if i[0:4] == 'map_']
+        for i in maps:
+            setattr(cjl_Aw, i, {})
+        return cjl_CommonUtil.send_cmd_normal('init', expects=expects)
+
+    # ---------- 时间流逝 ----------
+    @staticmethod
+    def cjl_time_pass(step_type, value, expects=''):
+        args = [step_type, value]
+        return cjl_CommonUtil.send_cmd_normal('time_pass', *args, expects=expects)
+
+    # ---------- 账户管理 ----------
+    @staticmethod
+    def cjl_register_account(phone, password, expects=''):
+        """返回 E000:CIDxxxx,6位验证码，拆分并映射 member_id 和 code"""
+        args = [phone, password]
+        ret = cjl_CommonUtil.send_cmd_ret_id('register_account', *args, expects=expects)
+        m = re.match(r'E000:(CID\d{8}),(\d{6})', ret)
+        if not m:
+            return ret
+        cid, code = m.group(1), m.group(2)
+        if cjl_CommonUtil.JUDGEMENT_FLAG and expects.startswith('E000:'):
+            em = re.match(r'E000:(CID\d{8}),(\d{6})', expects)
+            if em:
+                cjl_Aw._bind(cjl_Aw.map_member, em.group(1), cid, 'register_account member_id')
+                cjl_Aw.map_code[em.group(1)] = (em.group(2), code)
+        return cid, code
+
+    @staticmethod
+    def cjl_activate_account(member_id, verify_code, expects=''):
+        """验证码按录制的 member_id 映射：传入值等于该账户录制时的验证码才替换为实际验证码"""
+        if cjl_CommonUtil.JUDGEMENT_FLAG:
+            recorded = cjl_Aw.map_code.get(member_id)
+            if recorded and verify_code == recorded[0]:
+                verify_code = recorded[1]
+            if member_id in cjl_Aw.map_member:
+                member_id = cjl_Aw.map_member[member_id]
+        args = [member_id, verify_code]
+        return cjl_CommonUtil.send_cmd_normal('activate_account', *args, expects=expects)
+
+    @staticmethod
+    def cjl_unregister_account(member_id, password, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id, password]
+        return cjl_CommonUtil.send_cmd_normal('unregister_account', *args, expects=expects)
+
+    @staticmethod
+    def cjl_query_account(member_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id]
+        return cjl_CommonUtil.send_cmd_normal('query_account', *args, expects=expects)
+
+    # ---------- 车牌绑定 ----------
+    @staticmethod
+    def cjl_bind_plate_id(member_id, plate_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id, plate_id]
+        return cjl_CommonUtil.send_cmd_normal('bind_plate_id', *args, expects=expects)
+
+    @staticmethod
+    def cjl_unbind_plate_id(member_id, plate_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id, plate_id]
+        return cjl_CommonUtil.send_cmd_normal('unbind_plate_id', *args, expects=expects)
+
+    @staticmethod
+    def cjl_query_bindcar_info(member_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id]
+        return cjl_CommonUtil.send_cmd_normal('query_bindcar_info', *args, expects=expects)
+
+    # ---------- 车辆进出 ----------
+    @staticmethod
+    def cjl_car_entry(plate_id, gate_id, expects=''):
+        """返回 E000:session_id,account_id，拆分并映射 session_id"""
+        args = [plate_id, gate_id]
+        ret = cjl_CommonUtil.send_cmd_ret_id('car_entry', *args, expects=expects)
+        m = re.match(r'E000:(p\d{16}),(CID\d{8})', ret)
+        if not m:
+            return ret
+        session_id, acc_id = m.group(1), m.group(2)
+        if cjl_CommonUtil.JUDGEMENT_FLAG and expects.startswith('E000:'):
+            em = re.match(r'E000:(p\d{16}),(CID\d{8})', expects)
+            if em:
+                cjl_Aw._bind(cjl_Aw.map_session, em.group(1), session_id, 'car_entry session_id')
+                cjl_Aw._bind(cjl_Aw.map_member, em.group(2), acc_id, 'car_entry account_id')
+        return session_id, acc_id
+
+    @staticmethod
+    def cjl_occupy_park(session_id, space_id=None, expects=''):
+        """B版本新增 space_id 参数；A版本不传 space_id"""
+        if cjl_CommonUtil.JUDGEMENT_FLAG and session_id in cjl_Aw.map_session:
+            session_id = cjl_Aw.map_session[session_id]
+        args = [session_id] if space_id is None else [session_id, space_id]
+        return cjl_CommonUtil.send_cmd_normal('occupy_park', *args, expects=expects)
+
+    @staticmethod
+    def cjl_release_park(session_id, expects=''):
+        """B版本：返回 E000:车位号（如E000:S010），车位号确定，全等比较"""
+        if cjl_CommonUtil.JUDGEMENT_FLAG and session_id in cjl_Aw.map_session:
+            session_id = cjl_Aw.map_session[session_id]
+        args = [session_id]
+        return cjl_CommonUtil.send_cmd_normal('release_park', *args, expects=expects)
+
+    @staticmethod
+    def cjl_car_exit(session_id, gate_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and session_id in cjl_Aw.map_session:
+            session_id = cjl_Aw.map_session[session_id]
+        args = [session_id, gate_id]
+        return cjl_CommonUtil.send_cmd_normal('car_exit', *args, expects=expects)
+
+    @staticmethod
+    def cjl_check_car_status(plate_id, session_id, status, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and session_id in cjl_Aw.map_session:
+            session_id = cjl_Aw.map_session[session_id]
+        args = [plate_id, session_id, status]
+        return cjl_CommonUtil.send_cmd_normal('check_car_status', *args, expects=expects)
+
+    # ---------- 出入口 ----------
+    @staticmethod
+    def cjl_change_gate(gate_id, io_dir, expects=''):
+        args = [gate_id, io_dir]
+        return cjl_CommonUtil.send_cmd_normal('change_gate', *args, expects=expects)
+
+    @staticmethod
+    def cjl_query_gate_status(gate_id, expects=''):
+        args = [gate_id]
+        return cjl_CommonUtil.send_cmd_normal('query_gate_status', *args, expects=expects)
+
+    # ---------- 黑名单管理（B版本新增） ----------
+    @staticmethod
+    def cjl_add_blacklist(plate_id, expects=''):
+        args = [plate_id]
+        return cjl_CommonUtil.send_cmd_normal('add_blacklist', *args, expects=expects)
+
+    @staticmethod
+    def cjl_del_blacklist(plate_id, expects=''):
+        args = [plate_id]
+        return cjl_CommonUtil.send_cmd_normal('del_blacklist', *args, expects=expects)
+
+    # ---------- 账户充值子系统（B版本新增） ----------
+    @staticmethod
+    def cjl_recharge_account(member_id, value, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id, value]
+        return cjl_CommonUtil.send_cmd_normal('recharge_account', *args, expects=expects)
+
+    @staticmethod
+    def cjl_transfer_account(member_id1, member_id2, value, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id1 in cjl_Aw.map_member:
+            member_id1 = cjl_Aw.map_member[member_id1]
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id2 in cjl_Aw.map_member:
+            member_id2 = cjl_Aw.map_member[member_id2]
+        args = [member_id1, member_id2, value]
+        return cjl_CommonUtil.send_cmd_normal('transfer_account', *args, expects=expects)
+
+    @staticmethod
+    def cjl_purchase_moncard(member_id, plate_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id, plate_id]
+        return cjl_CommonUtil.send_cmd_normal('purchase_moncard', *args, expects=expects)
+
+    @staticmethod
+    def cjl_transfer_moncard(plate_id1, plate_id2, value, expects=''):
+        args = [plate_id1, plate_id2, value]
+        return cjl_CommonUtil.send_cmd_normal('transfer_moncard', *args, expects=expects)
+
+    @staticmethod
+    def cjl_pay_parkcost(session_id, pay_type, pay_value, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and session_id in cjl_Aw.map_session:
+            session_id = cjl_Aw.map_session[session_id]
+        args = [session_id, pay_type, pay_value]
+        return cjl_CommonUtil.send_cmd_normal('pay_parkcost', *args, expects=expects)
+
+    # ---------- 查询接口（B版本新增） ----------
+    @staticmethod
+    def cjl_query_account_asset(member_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id]
+        return cjl_CommonUtil.send_cmd_normal('query_account_asset', *args, expects=expects)
+
+    # ---------- 检查接口（B版本新增） ----------
+    @staticmethod
+    def cjl_check_occupied_spaces(used_num, used_park_list, expects=''):
+        args = [used_num, used_park_list]
+        return cjl_CommonUtil.send_cmd_normal('check_occupied_spaces', *args, expects=expects)
+
+    @staticmethod
+    def cjl_check_park_statistics(small_stats, medium_stats, large_stats, expects=''):
+        args = [small_stats, medium_stats, large_stats]
+        return cjl_CommonUtil.send_cmd_normal('check_park_statistics', *args, expects=expects)
+
+    @staticmethod
+    def cjl_check_revenue(type_, revenue_type, value, expects=''):
+        args = [type_, revenue_type, value]
+        return cjl_CommonUtil.send_cmd_normal('check_revenue', *args, expects=expects)
+
+    # ---------- 车位预约（C版本新增） ----------
+    @staticmethod
+    def cjl_reserve_space(plate_id, space_id, expects=''):
+        """返回 E000:预约号，映射录制预约号到实际预约号"""
+        args = [plate_id, space_id]
+        ret = cjl_CommonUtil.send_cmd_ret_id('reserve_space', *args, expects=expects)
+        m = re.match(r'E000:(r\d{8})$', ret)
+        if m and cjl_CommonUtil.JUDGEMENT_FLAG:
+            em = re.match(r'E000:(r\d{8})$', expects)
+            if em:
+                cjl_Aw._bind(cjl_Aw.map_reserve, em.group(1), m.group(1), 'reserve_space reserve_id')
+        return ret
+
+    @staticmethod
+    def cjl_cancel_reserve(reserve_id, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and reserve_id in cjl_Aw.map_reserve:
+            reserve_id = cjl_Aw.map_reserve[reserve_id]
+        args = [reserve_id]
+        return cjl_CommonUtil.send_cmd_normal('cancel_reserve', *args, expects=expects)
+
+    @staticmethod
+    def cjl_check_reserve_status(reserve_id, status, expects=''):
+        if cjl_CommonUtil.JUDGEMENT_FLAG and reserve_id in cjl_Aw.map_reserve:
+            reserve_id = cjl_Aw.map_reserve[reserve_id]
+        args = [reserve_id, status]
+        return cjl_CommonUtil.send_cmd_normal('check_reserve_status', *args, expects=expects)
+
+    @staticmethod
+    def cjl_query_reserve(member_id, expects=''):
+        """返回 E000:预约号|车牌|车位|时间;...，比较前把录制预约号替换为实际预约号"""
+        if cjl_CommonUtil.JUDGEMENT_FLAG and member_id in cjl_Aw.map_member:
+            member_id = cjl_Aw.map_member[member_id]
+        args = [member_id]
+        ret = cjl_CommonUtil.send_cmd('query_reserve', *args)
+        if not cjl_CommonUtil.JUDGEMENT_FLAG:
+            cjl_CommonUtil._add_aw_context('query_reserve', ret, 'cjl_query_reserve', *args)
+            return ret
+        if expects == '':
+            raise ValueError(f'JUDGEMENT_FLAG=True but expects not provided for: query_reserve({args})')
+        expect_value = re.sub(r'r\d{8}', lambda m: cjl_Aw.map_reserve.get(m.group(0), m.group(0)), expects)
+        assert ret == expect_value, f'cmd=query_reserve({args}), expected={expect_value!r}, actual={ret!r}'
+        return ret
+
+    # ---------- 洗车服务（C版本新增） ----------
+    @staticmethod
+    def cjl_take_wash_order(plate_id, expects=''):
+        """返回 E000:当日三位流水号"""
+        args = [plate_id]
+        return cjl_CommonUtil.send_cmd_normal('take_wash_order', *args, expects=expects)
+
+    @staticmethod
+    def cjl_cancel_wash_order(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('cancel_wash_order', *args, expects=expects)
+
+    @staticmethod
+    def cjl_query_wash_status(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('query_wash_status', *args, expects=expects)
+
+    @staticmethod
+    def cjl_start_wash_service(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('start_wash_service', *args, expects=expects)
+
+    @staticmethod
+    def cjl_end_wash_service(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('end_wash_service', *args, expects=expects)
+
+    @staticmethod
+    def cjl_trigger_wash_balance(expects=''):
+        return cjl_CommonUtil.send_cmd_normal('trigger_wash_balance', expects=expects)
+
+    @staticmethod
+    def cjl_query_wash_queue(wash_space_id=None, expects=''):
+        """wash_space_id 为空时查询全部洗车位"""
+        args = [] if wash_space_id is None else [wash_space_id]
+        return cjl_CommonUtil.send_cmd_normal('query_wash_queue', *args, expects=expects)
