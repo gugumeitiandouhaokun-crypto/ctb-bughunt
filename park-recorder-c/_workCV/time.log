@@ -1,0 +1,3 @@
+[CASE COST]__main__.MyTestCase1.test_cjl_cv01_holiday_eve_reserve_wash_cross_two_days[TIME]1.5627915859222412
+[CASE COST]__main__.MyTestCase1.test_cjl_cv02_wash_chaos_cancel_timeout_balance[TIME]4.478882551193237
+[CASE COST]__main__.MyTestCase1.test_cjl_cv03_one_account_three_cars_everything[TIME]1.7146379947662354

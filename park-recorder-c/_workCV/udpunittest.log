@@ -1,0 +1,8 @@
+test_cjl_cv01_holiday_eve_reserve_wash_cross_two_days (__main__.MyTestCase1.test_cjl_cv01_holiday_eve_reserve_wash_cross_two_days) ... ok
+test_cjl_cv02_wash_chaos_cancel_timeout_balance (__main__.MyTestCase1.test_cjl_cv02_wash_chaos_cancel_timeout_balance) ... ok
+test_cjl_cv03_one_account_three_cars_everything (__main__.MyTestCase1.test_cjl_cv03_one_account_three_cars_everything) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 11.118s
+
+OK
