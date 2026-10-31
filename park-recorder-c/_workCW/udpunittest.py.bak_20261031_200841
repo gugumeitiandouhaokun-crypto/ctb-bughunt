@@ -1,0 +1,54 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import os
+import unittest
+from testaw import cjl_init_service
+from testaw import cjl_Aw as aw
+from testtool import tool
+from timeout import timeout
+
+global_default_timeout = 300
+rS = 'E000:Success'
+rF = 'E001:Fail'
+rL = 'E002:Locked'
+
+
+class MyTestCase1(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        tool.logger_info('setUpClass')
+        tool.start_dut()
+        from testaw import cjl_CommonUtil
+        cjl_CommonUtil.JUDGEMENT_FLAG = True
+
+    @classmethod
+    def tearDownClass(cls):
+        tool.logger_info('tearDownClass')
+        tool.stop_dut()
+
+    def setUp(self):
+        tool.logger_info('setUp')
+        tool.case_start(self.id())
+        aw.init()
+
+    def tearDown(self):
+        tool.logger_info('tearDown')
+        tool.case_finished(self.id())
+        tool.send_cmd('init()')
+
+    def assertTrue(self, expr, msg=None):
+        if not expr:
+            tool.case_failed(self.id())
+        super(MyTestCase1, self).assertTrue(expr, msg)
+
+    def assertFalse(self, expr, msg=None):
+        if expr:
+            tool.case_failed(self.id())
+        super(MyTestCase1, self).assertFalse(expr, msg)
+
+
+if __name__ == '__main__':
+    logfile = os.path.join(os.path.dirname(__file__), 'udpunittest.log')
+    stream = open(logfile, 'w')
+    unittest.main(testRunner=unittest.TextTestRunner(stream, verbosity=2))

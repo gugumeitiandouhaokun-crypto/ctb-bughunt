@@ -1,0 +1,25 @@
+test_cjl_cw01_price_by_take_time_not_start (__main__.MyTestCase1.test_cjl_cw01_price_by_take_time_not_start) ... ok
+test_cjl_cw02_adjusted_workday_peak (__main__.MyTestCase1.test_cjl_cw02_adjusted_workday_peak) ... ok
+test_cjl_cw03_waiver_under_daily_cap (__main__.MyTestCase1.test_cjl_cw03_waiver_under_daily_cap) ... ok
+test_cjl_cw04_wash_then_park_over_midnight (__main__.MyTestCase1.test_cjl_cw04_wash_then_park_over_midnight) ... ok
+test_cjl_cw05_temp_car_holiday_wash (__main__.MyTestCase1.test_cjl_cw05_temp_car_holiday_wash) ... ok
+test_cjl_cw06_balance_short_then_temp_topup (__main__.MyTestCase1.test_cjl_cw06_balance_short_then_temp_topup) ... ok
+test_cjl_cw07_member_pay_bal_with_wash (__main__.MyTestCase1.test_cjl_cw07_member_pay_bal_with_wash) ... ok
+test_cjl_cw08_pay_first_then_wash (__main__.MyTestCase1.test_cjl_cw08_pay_first_then_wash) ... ok
+test_cjl_cw09_paid_window_while_queued (__main__.MyTestCase1.test_cjl_cw09_paid_window_while_queued) ... ok
+test_cjl_cw10_two_plates_one_balance (__main__.MyTestCase1.test_cjl_cw10_two_plates_one_balance) ... ok
+test_cjl_cw11_temp_call_timeout_fee (__main__.MyTestCase1.test_cjl_cw11_temp_call_timeout_fee) ... ok
+test_cjl_cw12_temp_cancel_fee (__main__.MyTestCase1.test_cjl_cw12_temp_cancel_fee) ... ok
+test_cjl_cw13_temp_expired_at_1730_free (__main__.MyTestCase1.test_cjl_cw13_temp_expired_at_1730_free) ... ok
+test_cjl_cw14_temp_washing_closed_at_1800 (__main__.MyTestCase1.test_cjl_cw14_temp_washing_closed_at_1800) ... ok
+test_cjl_cw15_moncard_last_day_wash (__main__.MyTestCase1.test_cjl_cw15_moncard_last_day_wash) ... ok
+test_cjl_cw16_temp_forced_exit_unpaid_wash (__main__.MyTestCase1.test_cjl_cw16_temp_forced_exit_unpaid_wash) ... ok
+test_cjl_cw17_short_stay_with_wash (__main__.MyTestCase1.test_cjl_cw17_short_stay_with_wash) ... ok
+test_cjl_cw18_pay_bal_wrong_then_right (__main__.MyTestCase1.test_cjl_cw18_pay_bal_wrong_then_right) ... ok
+test_cjl_cw19_overflow_bay_type_price (__main__.MyTestCase1.test_cjl_cw19_overflow_bay_type_price) ... ok
+test_cjl_cw20_month_boundary_revenue (__main__.MyTestCase1.test_cjl_cw20_month_boundary_revenue) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 22.197s
+
+OK
