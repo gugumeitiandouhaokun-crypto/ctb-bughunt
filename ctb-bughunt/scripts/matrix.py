@@ -6,9 +6,12 @@
 
 缺口类别：
   未调用      spec 中的命令从未被调用
-  未触发      spec 中命令的返回码从未出现
+  未触发      spec 中命令的某个返回码在该命令上没出现过，但系统在别的命令上返回过它
+  从未出现    spec 中的返回码在所有命令的任何返回中都没出现过（可能是被包装的内部码，也可能还没走到）
   单一返回码  命令只出现过一种返回码
   规格外      实际出现但 spec 中没有的命令或返回码（spec 可能漏了）
+
+另列每个返回码下的返回文本种数；文本在所有调用中完全相同的返回码会单独提示（同码下的分支从返回上区分不开）。
 
 用法：
   python matrix.py --notes notes
@@ -23,6 +26,11 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 PROBE_LINE_RE = re.compile(r"^\[\s*[\d.]+ms\] (.+?) => (.*)$")
+NEVER_HINT = ("\"从未出现\"的码在所有命令的任何返回中都没出现过：可能是源码内部的码、对外被统一包装成别的返回，"
+              "也可能只是还没有步骤走到。对照源码的返回路径确认：对外确实会返回的，构造步骤触发；"
+              "被包装、对外不会出现的，从 spec 中删除")
+UNIFORM_HINT = ("以下返回在所有调用中文本完全相同，同一返回码下的不同分支从返回上区分不开："
+                "用覆盖率判断这些分支是否走到，并在其后加查询步骤核对状态是否正确：")
 
 
 def code_of(ret: str, pattern: str = "") -> str:
@@ -64,12 +72,15 @@ def analyze(spec: dict, obs: list[tuple[str, str, str]]) -> dict:
     common = set((spec or {}).get("common_codes", []))
     seen: dict[str, Counter] = defaultdict(Counter)
     examples: dict[tuple[str, str], str] = {}
+    texts: dict[str, dict[str, Counter]] = defaultdict(lambda: defaultdict(Counter))
     for cmd, ret, _ in obs:
         name, code = command_of(cmd), code_of(ret, pattern)
         seen[name][code] += 1
         examples.setdefault((name, code), f"{cmd} => {ret}")
+        texts[name][code][ret.strip()] += 1
+    observed = {c for cnt in seen.values() for c in cnt}
     lookup = {k.lower(): k for k in spec_cmds}
-    gaps = {"未调用": [], "未触发": [], "单一返回码": [], "规格外": []}
+    gaps = {"未调用": [], "未触发": [], "从未出现": [], "单一返回码": [], "规格外": []}
     rows = []
     for name, info in spec_cmds.items():
         got = Counter()
@@ -82,7 +93,7 @@ def analyze(spec: dict, obs: list[tuple[str, str, str]]) -> dict:
         else:
             missing = [c for c in expected if c not in got]
             for c in missing:
-                gaps["未触发"].append(f"{name} {c}")
+                gaps["未触发" if c in observed else "从未出现"].append(f"{name} {c}")
             if len(got) == 1:
                 gaps["单一返回码"].append(f"{name} 只出现 {next(iter(got))}")
             extra = [c for c in got if c not in expected and c not in common]
@@ -94,7 +105,13 @@ def analyze(spec: dict, obs: list[tuple[str, str, str]]) -> dict:
             gaps["规格外"].append(f"命令 {obs_name} 不在 spec 中（{sum(cnt.values())} 次）")
         if not spec_cmds:
             rows.append((obs_name, [], cnt))
-    return {"rows": rows, "gaps": gaps, "total": len(obs), "has_spec": bool(spec_cmds)}
+    merged: dict[str, Counter] = defaultdict(Counter)
+    for by_code in texts.values():
+        for code, cnt in by_code.items():
+            merged[code].update(cnt)
+    uniform = sorted(f"{next(iter(cnt))}" for code, cnt in merged.items() if len(cnt) == 1 and sum(cnt.values()) > 1)
+    return {"rows": rows, "gaps": gaps, "total": len(obs), "has_spec": bool(spec_cmds),
+            "texts": texts, "uniform": uniform}
 
 
 def _match(seen: dict, name: str) -> str:
@@ -118,7 +135,18 @@ def render(result: dict, reviewed: bool) -> str:
         out.append(f"| {name} | {','.join(expected) or '-'} | {dist} |")
     for kind, items in gaps.items():
         out += ["", f"## {kind}（{len(items)}）", ""]
+        if kind == "从未出现" and items:
+            out.append(f"{NEVER_HINT}\n")
         out += [f"- {x}" for x in items] or ["无"]
+    out += ["", "## 返回文本形态", "", "每个命令每个返回码下不同返回文本的种数（文本含可变数据时种数会很多）。", ""]
+    for name, by_code in sorted(result.get("texts", {}).items()):
+        parts = []
+        for code, cnt in sorted(by_code.items()):
+            sample = "、".join(f"`{t[:60]}`" for t, _ in cnt.most_common(2))
+            parts.append(f"{code} {len(cnt)} 种（{sample}{' 等' if len(cnt) > 2 else ''}）")
+        out.append(f"- {name}：" + "；".join(parts))
+    if result.get("uniform"):
+        out += ["", UNIFORM_HINT, ""] + [f"- `{t}`" for t in result["uniform"]]
     return "\n".join(out) + "\n"
 
 
@@ -126,11 +154,15 @@ def summary(result: dict) -> str:
     gaps = result["gaps"]
     n = sum(len(v) for v in gaps.values())
     lines = [f"矩阵缺口 {n} 项：" + "，".join(f"{k} {len(v)}" for k, v in gaps.items())]
-    for kind in ("未调用", "未触发", "单一返回码", "规格外"):
+    for kind in gaps:
         for x in gaps[kind][:8]:
             lines.append(f"  [{kind}] {x}")
         if len(gaps[kind]) > 8:
             lines.append(f"  [{kind}] ... 另有 {len(gaps[kind]) - 8} 项")
+    if gaps["从未出现"]:
+        lines.append(f"  注意：{NEVER_HINT}")
+    if result.get("uniform"):
+        lines.append(f"  注意：{UNIFORM_HINT}{'、'.join(result['uniform'][:6])}")
     return "\n".join(lines)
 
 

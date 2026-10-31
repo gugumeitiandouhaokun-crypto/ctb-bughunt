@@ -4,7 +4,8 @@
 错误：
   - udpunittest.py / testaw.py 语法错误，或使用了 Python 3.8 不支持的语法
   - udpunittest.py 的 main 段（if __name__ == '__main__': 到文件末尾）与 pull 原件不一致
-  - TestCase 类不是唯一的 MyTestCase1；没有 test 方法；test 方法名不以 test_cjl_ 开头、非 ASCII、重名或缺少 @timeout
+  - TestCase 类不是唯一的 MyTestCase1；没有 test 方法；test 方法名不以 test_cjl_ 开头（题目原件自带的样例用例除外）、
+    非 ASCII、重名或缺少 @timeout
   - testaw.py / udpunittest.py 新增的函数、类与 MyTestCase1 中新增的非用例方法不以 cjl_ 开头
   - import 了标准库与 testaw / testtool / timeout 以外的模块
   - testtool.py / timeout.py / config.properties 与 pull 原件不一致（udpPort 的值除外，本地运行会改用专用端口）
@@ -104,7 +105,8 @@ def _has_timeout(fn: ast.FunctionDef) -> bool:
     return False
 
 
-def _check_cases(tree: ast.Module, errors: list[str]) -> int:
+def _check_cases(tree: ast.Module, errors: list[str], orig: ast.Module | None = None) -> int:
+    sample_tests = {m for m in _class_methods(orig) if m.startswith("test")}
     cases = [n for n in tree.body if isinstance(n, ast.ClassDef) and any(_is_testcase_base(b) for b in n.bases)]
     names = [c.name for c in cases]
     if names != ["MyTestCase1"]:
@@ -116,7 +118,7 @@ def _check_cases(tree: ast.Module, errors: list[str]) -> int:
             if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) or not fn.name.startswith("test"):
                 continue
             total += 1
-            if not fn.name.isascii() or not TEST_NAME_RE.match(fn.name):
+            if fn.name not in sample_tests and (not fn.name.isascii() or not TEST_NAME_RE.match(fn.name)):
                 errors.append(f"第 {fn.lineno} 行用例名 {fn.name!r} 须以 {TEST_PREFIX} 开头，只含英文、数字、下划线")
             if fn.name in seen:
                 errors.append(f"第 {fn.lineno} 行用例名 {fn.name} 与第 {seen[fn.name]} 行重名，前一个会被覆盖")
@@ -213,11 +215,11 @@ def check(answer_dir: Path, pristine_dir: Path | None) -> tuple[list[str], list[
     udp_text = _read(udp)
     tree = _parse("udpunittest.py", udp_text, errors)
     if tree is not None:
-        info["tests"] = _check_cases(tree, errors)
+        orig_udp = _parse_quiet(pristine_dir / "udpunittest.py") if has_pristine else None
+        info["tests"] = _check_cases(tree, errors, orig_udp)
         _check_imports("udpunittest.py", tree, errors, warnings)
         _check_cmd_format("udpunittest.py", tree, warnings)
-        _check_naming("udpunittest.py", tree,
-                      _parse_quiet(pristine_dir / "udpunittest.py") if has_pristine else None, errors, warnings)
+        _check_naming("udpunittest.py", tree, orig_udp, errors, warnings)
 
     aw = answer_dir / "testaw.py"
     if aw.is_file():

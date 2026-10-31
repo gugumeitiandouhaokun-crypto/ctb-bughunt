@@ -17,7 +17,7 @@
   spec [--force]          从题目描述与反编译源码起草接口规格 notes/spec.json（需 agent 审阅）
   probe -f F | -c CMD     探针：在无 bug 程序上发送命令看真实返回
   record -f F | --gen G   只写步骤，录制真实返回生成数据表断言用例（--dry-run 只出报告，--coverage 统计覆盖率）
-  matrix                  接口 × 返回码矩阵：与 spec 对照，列出未调用/未触发/单一返回码/规格外
+  matrix                  接口 × 返回码矩阵：与 spec 对照，列出未调用/未触发/从未出现/单一返回码/规格外
   coverage                带 JaCoCo 跑一次 local，输出分层覆盖率
   local                   本地对无 bug 程序跑 udpunittest.py
   check                   提交前规范检查
@@ -544,6 +544,12 @@ def cmd_restore(work: Work, args) -> int:
         pick = _best_submit(history)
         if pick is None:
             print("提交记录都没有检出结果")
+            return 1
+        last = history[-1]
+        if last.get("passed") is not None and last["passed"] >= pick["passed"]:
+            print(f"最近一次提交 {last['name']} 检出 {last['passed']}，已是最多，不需要恢复。"
+                  "提交后删除未命中与命中已替代的用例是预期行为，保留的用例照样命中这些 bug。")
+            print("确需恢复某次提交的完整答题文件时用 --name 指定记录名")
             return 1
     src = _submits_dir(work) / pick["name"]
     for name in ("testaw.py", "udpunittest.py"):

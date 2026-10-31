@@ -278,7 +278,8 @@ def apply(answer_dir: Path, notes: Path, judge: dict, kind: str, prune: bool = T
     p = plan(items, names, costs)
     data = load(notes)
     before = {b for r in data["rounds"] for t in r.get("tests", {}).values() for b in t.get("bugs", [])}
-    remove = [] if p["unattributed"] else sorted(set(p["replaced"]) | set(p["missed"]))
+    samples = set(test_methods(_read(notes / "pristine" / "udpunittest.py")[0]))
+    remove = [] if p["unattributed"] else sorted((set(p["replaced"]) | set(p["missed"])) - samples)
     rnd = {
         "time": f"{datetime.now():%Y-%m-%d %H:%M:%S}", "kind": kind, "judge_id": judge.get("judgeId"),
         "score": judge.get("score"), "passed": bug.get("passed"), "total": bug.get("total"),
@@ -310,8 +311,13 @@ def apply(answer_dir: Path, notes: Path, judge: dict, kind: str, prune: bool = T
         rnd["digest_after"] = answer_digest(answer_dir)
         rnd["pruned"] = True
         msg.append(f"已删除 {len(remove)} 个用例：{', '.join(remove)}")
+        msg.append("这是预期行为：未命中的用例和命中的 bug 已由更快用例覆盖的用例（命中已替代）都会删除，"
+                   "场景已记入场景库，覆盖范围已记入已探索范围；保留的用例照样命中这些 bug，不要 restore")
     elif remove:
         msg.append(f"待删除 {len(remove)} 个用例（未执行，用 ctb.py prune 删除）：{', '.join(remove)}")
+    kept_samples = sorted((set(p["replaced"]) | set(p["missed"])) & samples)
+    if kept_samples and not p["unattributed"]:
+        msg.append(f"题目原件自带的样例用例不删除：{', '.join(kept_samples)}")
     save(notes, data)
     return "\n".join(msg)
 
