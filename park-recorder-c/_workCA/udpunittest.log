@@ -1,0 +1,27 @@
+test_cjl_ca01_register_params (__main__.MyTestCase1.test_cjl_ca01_register_params) ... ok
+test_cjl_ca02_activate_rules (__main__.MyTestCase1.test_cjl_ca02_activate_rules) ... ok
+test_cjl_ca03_activate_in_time (__main__.MyTestCase1.test_cjl_ca03_activate_in_time) ... ok
+test_cjl_ca04_unregister (__main__.MyTestCase1.test_cjl_ca04_unregister) ... ok
+test_cjl_ca05_unregister_with_car_in_park (__main__.MyTestCase1.test_cjl_ca05_unregister_with_car_in_park) ... ok
+test_cjl_ca06_bind_rules (__main__.MyTestCase1.test_cjl_ca06_bind_rules) ... ok
+test_cjl_ca07_unbind_12h (__main__.MyTestCase1.test_cjl_ca07_unbind_12h) ... ok
+test_cjl_ca08_temp_account (__main__.MyTestCase1.test_cjl_ca08_temp_account) ... ok
+test_cjl_ca09_temp_car_bind_in_park (__main__.MyTestCase1.test_cjl_ca09_temp_car_bind_in_park) ... ok
+test_cjl_ca10_query_params (__main__.MyTestCase1.test_cjl_ca10_query_params) ... ok
+test_cjl_ca11_change_gate_manual (__main__.MyTestCase1.test_cjl_ca11_change_gate_manual) ... ok
+test_cjl_ca12_tide_and_restore (__main__.MyTestCase1.test_cjl_ca12_tide_and_restore) ... ok
+test_cjl_ca13_tide_non_workday (__main__.MyTestCase1.test_cjl_ca13_tide_non_workday) ... ok
+test_cjl_ca14_switch_while_passing (__main__.MyTestCase1.test_cjl_ca14_switch_while_passing) ... ok
+test_cjl_ca15_gate_flow_limit (__main__.MyTestCase1.test_cjl_ca15_gate_flow_limit) ... ok
+test_cjl_ca16_car_status_params (__main__.MyTestCase1.test_cjl_ca16_car_status_params) ... ok
+test_cjl_ca17_inpark_timeout (__main__.MyTestCase1.test_cjl_ca17_inpark_timeout) ... ok
+test_cjl_ca18_time_pass_params (__main__.MyTestCase1.test_cjl_ca18_time_pass_params) ... ok
+test_cjl_ca19_unregister_blocked (__main__.MyTestCase1.test_cjl_ca19_unregister_blocked) ... ok
+test_cjl_ca20_unbind_blocked (__main__.MyTestCase1.test_cjl_ca20_unbind_blocked) ... ok
+test_cjl_ca21_bind_while_passing (__main__.MyTestCase1.test_cjl_ca21_bind_while_passing) ... ok
+test_cjl_ca22_member_capacity_500 (__main__.MyTestCase1.test_cjl_ca22_member_capacity_500) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 49.113s
+
+OK

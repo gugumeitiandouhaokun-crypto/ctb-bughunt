@@ -58,6 +58,8 @@ TARGETS_WASH = [
     ('c', 'a', f'({F})V', '强制出场处理洗车单'),
 ]
 
+TARGETS_ALL = [(c, None, None, f'类{c}') for c in 'abcefghi']
+
 
 def wanted(cls, name, desc):
     for c, n, d, label in TARGETS:
@@ -98,10 +100,12 @@ def main():
     ap.add_argument('--no-run', action='store_true')
     ap.add_argument('--gaps', action='store_true')
     ap.add_argument('--exec', nargs='*')
-    ap.add_argument('--set', choices=['park', 'wash'], default='park')
+    ap.add_argument('--set', choices=['park', 'wash', 'all'], default='park')
     args = ap.parse_args()
     if args.set == 'wash':
         TARGETS[:] = TARGETS_WASH
+    elif args.set == 'all':
+        TARGETS[:] = TARGETS_ALL
     work = os.path.join(HERE, args.work)
     exec_path = os.path.join(work, 'jacocoC.exec')
     if not args.no_run and not args.exec:
