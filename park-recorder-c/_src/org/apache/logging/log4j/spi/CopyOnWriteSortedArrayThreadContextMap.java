@@ -1,0 +1,221 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package org.apache.logging.log4j.spi;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.logging.log4j.spi.CopyOnWrite;
+import org.apache.logging.log4j.spi.ObjectThreadContextMap;
+import org.apache.logging.log4j.spi.ReadOnlyThreadContextMap;
+import org.apache.logging.log4j.spi.ThreadContextMap;
+import org.apache.logging.log4j.util.PropertiesUtil;
+import org.apache.logging.log4j.util.ReadOnlyStringMap;
+import org.apache.logging.log4j.util.SortedArrayStringMap;
+import org.apache.logging.log4j.util.StringMap;
+
+class CopyOnWriteSortedArrayThreadContextMap
+implements CopyOnWrite,
+ObjectThreadContextMap,
+ReadOnlyThreadContextMap {
+    public static final String INHERITABLE_MAP = "isThreadContextMapInheritable";
+    protected static final int DEFAULT_INITIAL_CAPACITY = 16;
+    protected static final String PROPERTY_NAME_INITIAL_CAPACITY = "log4j2.ThreadContext.initial.capacity";
+    private static final StringMap EMPTY_CONTEXT_DATA = new SortedArrayStringMap(1);
+    private static volatile int initialCapacity;
+    private static volatile boolean inheritableMap;
+    private final ThreadLocal<StringMap> localMap = this.createThreadLocalMap();
+
+    static void init() {
+        PropertiesUtil propertiesUtil = PropertiesUtil.getProperties();
+        initialCapacity = propertiesUtil.getIntegerProperty(PROPERTY_NAME_INITIAL_CAPACITY, 16);
+        inheritableMap = propertiesUtil.getBooleanProperty(INHERITABLE_MAP);
+    }
+
+    private ThreadLocal<StringMap> createThreadLocalMap() {
+        if (inheritableMap) {
+            return new InheritableThreadLocal<StringMap>(){
+
+                @Override
+                protected StringMap childValue(StringMap stringMap) {
+                    if (stringMap == null) {
+                        return null;
+                    }
+                    stringMap = CopyOnWriteSortedArrayThreadContextMap.this.createStringMap(stringMap);
+                    stringMap.freeze();
+                    return stringMap;
+                }
+            };
+        }
+        return new ThreadLocal<StringMap>();
+    }
+
+    protected StringMap createStringMap() {
+        return new SortedArrayStringMap(initialCapacity);
+    }
+
+    protected StringMap createStringMap(ReadOnlyStringMap readOnlyStringMap) {
+        return new SortedArrayStringMap(readOnlyStringMap);
+    }
+
+    @Override
+    public void put(String string, String string2) {
+        this.putValue(string, string2);
+    }
+
+    public void putValue(String string, Object object) {
+        StringMap stringMap = this.localMap.get();
+        stringMap = stringMap == null ? this.createStringMap() : this.createStringMap(stringMap);
+        stringMap.putValue(string, object);
+        stringMap.freeze();
+        this.localMap.set(stringMap);
+    }
+
+    @Override
+    public void putAll(Map<String, String> object) {
+        if (object == null || object.isEmpty()) {
+            return;
+        }
+        StringMap stringMap = this.localMap.get();
+        stringMap = stringMap == null ? this.createStringMap() : this.createStringMap(stringMap);
+        for (Map.Entry entry : object.entrySet()) {
+            stringMap.putValue((String)entry.getKey(), entry.getValue());
+        }
+        stringMap.freeze();
+        this.localMap.set(stringMap);
+    }
+
+    @Override
+    public <V> void putAllValues(Map<String, V> object) {
+        if (object == null || object.isEmpty()) {
+            return;
+        }
+        StringMap stringMap = this.localMap.get();
+        stringMap = stringMap == null ? this.createStringMap() : this.createStringMap(stringMap);
+        for (Map.Entry entry : object.entrySet()) {
+            stringMap.putValue((String)entry.getKey(), entry.getValue());
+        }
+        stringMap.freeze();
+        this.localMap.set(stringMap);
+    }
+
+    @Override
+    public String get(String string) {
+        return (String)this.getValue(string);
+    }
+
+    @Override
+    public <V> V getValue(String string) {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap == null) {
+            return null;
+        }
+        return stringMap.getValue(string);
+    }
+
+    @Override
+    public void remove(String string) {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap != null) {
+            stringMap = this.createStringMap(stringMap);
+            stringMap.remove(string);
+            stringMap.freeze();
+            this.localMap.set(stringMap);
+        }
+    }
+
+    @Override
+    public void removeAll(Iterable<String> object) {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap != null) {
+            stringMap = this.createStringMap(stringMap);
+            object = object.iterator();
+            while (object.hasNext()) {
+                String string = (String)object.next();
+                stringMap.remove(string);
+            }
+            stringMap.freeze();
+            this.localMap.set(stringMap);
+        }
+    }
+
+    @Override
+    public void clear() {
+        this.localMap.remove();
+    }
+
+    @Override
+    public boolean containsKey(String string) {
+        StringMap stringMap = this.localMap.get();
+        return stringMap != null && stringMap.containsKey(string);
+    }
+
+    @Override
+    public Map<String, String> getCopy() {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap == null) {
+            return new HashMap<String, String>();
+        }
+        return stringMap.toMap();
+    }
+
+    @Override
+    public StringMap getReadOnlyContextData() {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap == null) {
+            return EMPTY_CONTEXT_DATA;
+        }
+        return stringMap;
+    }
+
+    @Override
+    public Map<String, String> getImmutableMapOrNull() {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap == null) {
+            return null;
+        }
+        return Collections.unmodifiableMap(stringMap.toMap());
+    }
+
+    @Override
+    public boolean isEmpty() {
+        StringMap stringMap = this.localMap.get();
+        return stringMap == null || stringMap.size() == 0;
+    }
+
+    public String toString() {
+        StringMap stringMap = this.localMap.get();
+        if (stringMap == null) {
+            return "{}";
+        }
+        return stringMap.toString();
+    }
+
+    public int hashCode() {
+        StringMap stringMap = this.localMap.get();
+        return 31 + (stringMap == null ? 0 : stringMap.hashCode());
+    }
+
+    public boolean equals(Object map) {
+        if (this == map) {
+            return true;
+        }
+        if (map == null) {
+            return false;
+        }
+        if (!(map instanceof ThreadContextMap)) {
+            return false;
+        }
+        map = (ThreadContextMap)((Object)map);
+        Map<String, String> map2 = this.getImmutableMapOrNull();
+        map = map.getImmutableMapOrNull();
+        return !(map2 == null ? map != null : !map2.equals(map));
+    }
+
+    static {
+        EMPTY_CONTEXT_DATA.freeze();
+        CopyOnWriteSortedArrayThreadContextMap.init();
+    }
+}
+

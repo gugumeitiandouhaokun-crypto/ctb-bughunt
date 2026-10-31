@@ -1,0 +1,54 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package org.apache.logging.log4j.core.util;
+
+import java.util.concurrent.locks.LockSupport;
+import org.apache.logging.log4j.core.util.Clock;
+import org.apache.logging.log4j.core.util.Log4jThread;
+
+public final class CoarseCachedClock
+implements Clock {
+    private static volatile CoarseCachedClock instance;
+    private static final Object INSTANCE_LOCK;
+    private volatile long millis = System.currentTimeMillis();
+    private final Thread updater = new Log4jThread("CoarseCachedClock Updater Thread"){
+
+        @Override
+        public void run() {
+            while (true) {
+                CoarseCachedClock.this.millis = System.currentTimeMillis();
+                LockSupport.parkNanos(1000000L);
+            }
+        }
+    };
+
+    private CoarseCachedClock() {
+        this.updater.setDaemon(true);
+        this.updater.start();
+    }
+
+    public static CoarseCachedClock instance() {
+        CoarseCachedClock coarseCachedClock = instance;
+        if (coarseCachedClock == null) {
+            Object object = INSTANCE_LOCK;
+            synchronized (object) {
+                coarseCachedClock = instance;
+                if (coarseCachedClock == null) {
+                    instance = coarseCachedClock = new CoarseCachedClock();
+                }
+            }
+        }
+        return coarseCachedClock;
+    }
+
+    @Override
+    public final long currentTimeMillis() {
+        return this.millis;
+    }
+
+    static {
+        INSTANCE_LOCK = new Object();
+    }
+}
+

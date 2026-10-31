@@ -1,0 +1,37 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package org.apache.logging.log4j.core.jmx;
+
+import java.util.Map;
+import javax.management.ObjectName;
+
+public interface LoggerContextAdminMBean {
+    public static final String PATTERN = "org.apache.logging.log4j2:type=%s";
+    public static final String NOTIF_TYPE_RECONFIGURED = "com.apache.logging.log4j.core.jmx.config.reconfigured";
+
+    public ObjectName getObjectName();
+
+    public String getStatus();
+
+    public String getName();
+
+    public String getConfigLocationUri();
+
+    public void setConfigLocationUri(String var1);
+
+    public String getConfigText();
+
+    public String getConfigText(String var1);
+
+    public void setConfigText(String var1, String var2);
+
+    public String getConfigName();
+
+    public String getConfigClassName();
+
+    public String getConfigFilter();
+
+    public Map<String, String> getConfigProperties();
+}
+

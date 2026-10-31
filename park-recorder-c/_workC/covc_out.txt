@@ -1,0 +1,443 @@
+﻿udpunittest 退出码 0，耗时 20s，Ran 20 tests in 19.929s OK
+| 方法 | 用途 | 行 覆盖/总 | 分支 覆盖/总 |
+|---|---|---|---|
+| e.a(Ljava/lang/String;I) | 时间推进（放行） | 205/392 | 112/203 |
+| e.c(Lcom/huawei/tools/g/a/f;) | 出场释放车位/预约车位 | 21/34 | 6/16 |
+| e.k(Ljava/lang/String;Ljava/lang/String;) | check_occupied_spaces | 27/27 | 18/20 |
+| e.b(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;) | check_park_statistics | 41/42 | 31/38 |
+| e.h() | 场内超时扫描 | 21/21 | 13/14 |
+| e.z(Ljava/lang/String;) | 强制出场 | 26/42 | 5/16 |
+| e.p(Ljava/lang/String;Ljava/lang/String;) | 满位判定 | 21/22 | 6/8 |
+| e.l() | 锁定配额重算 | 40/42 | 16/20 |
+| f.g(Ljava/lang/String;Ljava/lang/String;) | car_entry | 60/65 | 14/20 |
+| f.j(Ljava/lang/String;Ljava/lang/String;) | occupy_park | 140/143 | 50/62 |
+| f.b(Ljava/lang/String;) | release_park | 74/80 | 20/30 |
+| f.f(Ljava/lang/String;) | add_blacklist | 6/7 | 4/6 |
+| f.g(Ljava/lang/String;) | del_blacklist | 4/5 | 2/4 |
+| f.i(Ljava/lang/String;) | cancel_reserve | 18/18 | 6/6 |
+| f.n(Ljava/lang/String;Ljava/lang/String;) | check_reserve_status | 21/22 | 16/18 |
+| g.F(Ljava/lang/String;) | 车牌是否在场 | 7/7 | 5/6 |
+| g.f(Lcom/huawei/tools/g/a/f;) | 是否进场中 | 8/8 | 9/10 |
+| g.J(Ljava/lang/String;) | 是否黑名单 | 1/1 | 0/0 |
+| g.r(Ljava/lang/String;Ljava/lang/String;) | 预约数+1 | 6/6 | 2/4 |
+| g.s(Ljava/lang/String;Ljava/lang/String;) | 预约数-1 | 8/8 | 4/8 |
+| h.q() | 预约类（全部方法） q() | 3/3 | 1/2 |
+| h.m(Ljava/lang/String;Ljava/lang/String;) | 预约类（全部方法） m(Ljava/lang/String;Ljava/lang/String;) | 101/105 | 53/62 |
+| h.j(Ljava/lang/String;) | 预约类（全部方法） j(Ljava/lang/String;) | 41/42 | 17/18 |
+| h.r() | 预约类（全部方法） r() | 19/19 | 12/12 |
+| h.s() | 预约类（全部方法） s() | 25/25 | 14/14 |
+| h.R(Ljava/lang/String;) | 预约类（全部方法） R(Ljava/lang/String;) | 7/7 | 6/6 |
+| h.a(Lcom/huawei/tools/g/a/h;) | 预约类（全部方法） a(Lcom/huawei/tools/g/a/h;) | 6/8 | 2/4 |
+| h.S(Ljava/lang/String;) | 预约类（全部方法） S(Ljava/lang/String;) | 3/3 | 1/2 |
+| h.T(Ljava/lang/String;) | 预约类（全部方法） T(Ljava/lang/String;) | 10/10 | 7/8 |
+| h.U(Ljava/lang/String;) | 预约类（全部方法） U(Ljava/lang/String;) | 6/6 | 5/6 |
+| h.b(Lcom/huawei/tools/g/a/h;) | 预约类（全部方法） b(Lcom/huawei/tools/g/a/h;) | 12/12 | 2/4 |
+合计：行 988/1232，分支 459/647
+
+== e.a(Ljava/lang/String;I) [时间推进（放行）]
+  L214 mi=0 mb=2/4 -> [147] if (var2_2 <= 0 || var2_2 > 10000) {
+  L215 mi=6 mb=0/0 -> [148] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.j.key);
+  L219 mi=0 mb=1/5 -> [150, 151] var5_5 = var1_1; | var6_7 = -1;
+  L233 mi=6 mb=0/0 -> [191] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.h.key);
+  L236 mi=0 mb=1/2 -> [194] if (d.de + var3_8 > 31535999L) {
+  L237 mi=6 mb=0/0 -> [195] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.j.key);
+  L244 mi=0 mb=1/2 -> [199] if (this.cJ != null) {
+  L46100 mi=1 mb=0/0 -> [148] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.j.key);
+  L47100 mi=1 mb=0/0 -> [191] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.h.key);
+  L48100 mi=1 mb=0/0 -> [195] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.j.key);
+  L48802 mi=0 mb=1/2 -> [206] if (var13_21.bM > 0L) continue;
+  L48805 mi=0 mb=1/4 -> [207] if (var13_21.bS > 0 && var13_21.bQ == 0L && var9_17 >= var13_21.bL + 5L) {
+  L48809 mi=0 mb=1/4 -> [210] if (var13_21.bT <= 0 || var13_21.bQ <= 0L || var9_17 < var13_21.bQ + 5L) continue;
+  L48824 mi=0 mb=1/2 -> [218] if (var16_27 == null) continue;
+  L48835 mi=0 mb=1/4 -> [228] var2_2 = var18_31.bS > 0 && var18_31.bQ == 0L ? 1 : 0;
+  L48841 mi=0 mb=1/2 -> [230] var21_35 = var16_27.bo < 0L ? var19_32 : Math.max(var19_32, var16_27.bo + 5L);
+  L48844 mi=6 mb=0/0 -> [230] var21_35 = var16_27.bo < 0L ? var19_32 : Math.max(var19_32, var16_27.bo + 5L);
+  L48847 mi=0 mb=1/2 -> [231] if (var21_35 > var9_17) break;
+  L48853 mi=0 mb=1/4 -> [234] var3_9 = "O".equals(var2_3) != false || "B".equals(var2_3) != false;
+  L48873 mi=0 mb=2/4 -> [263] if (!"I".equals(var2_3) && !"B".equals(var2_3)) break block57;
+  L48874 mi=3 mb=0/0 -> [264] super.d((f)var18_31);
+  L48875 mi=1 mb=0/0 -> [265] var18_31.bQ = 0L;
+  L48876 mi=1 mb=0/0 -> [266] var18_31.bT = 0;
+  L48877 mi=1 mb=0/0 -> [267] var18_31.bU = null;
+  L48878 mi=3 mb=0/0 -> [268, 269] var18_31.cj = var21_35; | break block56;
+  L48881 mi=0 mb=1/2 -> [344] if (v1) break block61;
+  L48882 mi=3 mb=0/0 -> [345] super.d((f)var18_31);
+  L48883 mi=1 mb=0/0 -> [346] var18_31.bQ = 0L;
+  L48884 mi=1 mb=0/0 -> [347] var18_31.bT = 0;
+  L48885 mi=1 mb=0/0 -> [348] var18_31.bU = null;
+  L48886 mi=3 mb=0/0 -> [349, 350] var18_31.cj = var21_35; | break block56;
+  L48887 mi=0 mb=1/2 -> [352] if (!"paid".equals(var18_31.ca) || var18_31.ce <= 0L || d.de - var18_31.ce <= 900L) ** GOTO lbl206
+  L48888 mi=0 mb=1/2 -> [352] if (!"paid".equals(var18_31.ca) || var18_31.ce <= 0L || d.de - var18_31.ce <= 900L) ** GOTO lbl206
+  L48889 mi=0 mb=1/2 -> [352] if (!"paid".equals(var18_31.ca) || var18_31.ce <= 0L || d.de - var18_31.ce <= 900L) ** GOTO lbl206
+  L48890 mi=6 mb=0/0 -> [353, 354] v3 = var18_31; | var23_38 = var1_1.cI.a((f)v3, v3.ce);
+  L48891 mi=2 mb=0/0 -> [355] var25_42 = var18_31.cb;
+  L48893 mi=2 mb=0/0 -> [356] var2_3 = var18_31.bh;
+  L48894 mi=5 mb=0/0 -> [357] var2_3 = (var2_3 = (String)d.dg.get(var2_3)) != null ? (com.huawei.tools.g.a.c)d.df.get(var2_3) : null;
+  L48895 mi=4 mb=2/2 -> [357] var2_3 = (var2_3 = (String)d.dg.get(var2_3)) != null ? (com.huawei.tools.g.a.c)d.df.get(var2_3) : null;
+  L48896 mi=5 mb=0/0 -> [357] var2_3 = (var2_3 = (String)d.dg.get(var2_3)) != null ? (com.huawei.tools.g.a.c)d.df.get(var2_3) : null;
+  L48899 mi=2 mb=0/0 -> [358] var27_44 = 0.0;
+  L48901 mi=4 mb=2/2 -> [359] if (var23_38 <= 0.0) {
+  L48902 mi=3 mb=0/0 -> [360] var3_13 = true;
+  L48903 mi=2 mb=2/2 -> [361] } else if (var2_3 != null) {
+  L48904 mi=2 mb=0/0 -> [364] if (var3_13) {
+  L48905 mi=2 mb=0/0 -> [364] if (var3_13) {
+  L48906 mi=3 mb=0/0 -> [364] if (var3_13) {
+  L48907 mi=2 mb=0/0 -> [363] var3_13 = var2_3.by - Math.max(0.0, var29_45) >= var23_38;
+  L48908 mi=7 mb=2/2 -> [364] if (var3_13) {
+  L48909 mi=2 mb=2/2 -> [364] if (var3_13) {
+  L48910 mi=2 mb=0/0 -> [365] var27_44 = var23_38;
+  L48912 mi=1 mb=0/0 -> [365] var27_44 = var23_38;
+  L48913 mi=2 mb=0/0 -> [368] var3_13 = false;
+  L48916 mi=2 mb=2/2 -> [370] if (!var3_13) {
+  L48917 mi=6 mb=4/4 -> [377] if (var27_44 > 0.0 && var2_3 != null) {
+  L48918 mi=4 mb=0/0 -> [378] var2_3.by -= var27_44;
+  L48919 mi=4 mb=0/0 -> [379] var18_31.cd += var27_44;
+  L48920 mi=2 mb=0/0 -> [380] c.a((double)var27_44);
+  L48922 mi=4 mb=0/0 -> [382] var18_31.cb = var25_42 + var23_38;
+  L48923 mi=2 mb=0/0 -> [383] var18_31.ca = "paid";
+  L48924 mi=2 mb=0/0 -> [384] var18_31.ce = d.de;
+  L48925 mi=1 mb=0/0 -> [384] var18_31.ce = d.de;
+  L48927 mi=3 mb=0/0 -> [371] super.d((f)var18_31);
+  L48928 mi=1 mb=0/0 -> [372] var18_31.bQ = 0L;
+  L48929 mi=1 mb=0/0 -> [373] var18_31.bT = 0;
+  L48930 mi=1 mb=0/0 -> [374] var18_31.bU = null;
+  L48931 mi=2 mb=0/0 -> [375] var18_31.cj = var21_35;
+  L48933 mi=1 mb=0/0 -> [375] var18_31.cj = var21_35;
+  L48945 mi=0 mb=1/2 -> [411] var2_4 = (f)var18_31.next();
+  L48948 mi=0 mb=1/4 -> [413] var19_33 = var2_4.bS > 0 && var2_4.bQ == 0L;
+  L48949 mi=6 mb=3/4 -> [414] v4 = var20_34 = var2_4.bT > 0 && var2_4.bQ > 0L;
+  L48950 mi=0 mb=1/4 -> [415] if (var19_33 && var14_24.equals(var2_4.bi)) {
+  L48951 mi=2 mb=0/0 -> [416] var17_28 = true;
+  L48952 mi=1 mb=0/0 -> [417] break;
+  L48954 mi=4 mb=3/4 -> [419] if (!var20_34 || !var14_24.equals(var2_4.bU)) continue;
+  L48955 mi=2 mb=0/0 -> [420] var17_28 = true;
+  L48956 mi=1 mb=0/0 -> [421] break;
+  L48959 mi=0 mb=1/2 -> [423] if (var17_28) continue;
+  L50041 mi=1 mb=0/0 -> [230] var21_35 = var16_27.bo < 0L ? var19_32 : Math.max(var19_32, var16_27.bo + 5L);
+  L50048 mi=0 mb=1/2 -> [242] if (var3_10.ck != null) {
+  L50049 mi=1 mb=0/0 -> [243] var3_10.ck = null;
+  L50058 mi=2 mb=0/0 -> [243] var3_10.ck = null;
+  L50072 mi=2 mb=0/0 -> [265] var18_31.bQ = 0L;
+  L50073 mi=2 mb=0/0 -> [266] var18_31.bT = 0;
+  L50074 mi=2 mb=0/0 -> [267] var18_31.bU = null;
+  L50075 mi=1 mb=0/0 -> [268] var18_31.cj = var21_35;
+  L50076 mi=0 mb=1/2 -> [273] if (var3_12.bX > 0L) break block58;
+  L50077 mi=2 mb=0/0 -> [275] if (d.dg.containsKey(var31_46) && (var33_51 = (com.huawei.tools.g.a.c)d.df.get(var32_49 = (String)d.dg.get(var31_46))) != null && var33_51.by < 0.0) ** GOTO lbl-1000
+  L50078 mi=4 mb=2/2 -> [275] if (d.dg.containsKey(var31_46) && (var33_51 = (com.huawei.tools.g.a.c)d.df.get(var32_49 = (String)d.dg.get(var31_46))) != null && var33_51.by < 0.0) ** GOTO lbl-1000
+  L50079 mi=5 mb=0/0 -> [275] if (d.dg.containsKey(var31_46) && (var33_51 = (com.huawei.tools.g.a.c)d.df.get(var32_49 = (String)d.dg.get(var31_46))) != null && var33_51.by < 0.0) ** GOTO lbl-1000
+  L50080 mi=5 mb=0/0 -> [275] if (d.dg.containsKey(var31_46) && (var33_51 = (com.huawei.tools.g.a.c)d.df.get(var32_49 = (String)d.dg.get(var31_46))) != null && var33_51.by < 0.0) ** GOTO lbl-1000
+  L50081 mi=6 mb=4/4 -> [275] if (d.dg.containsKey(var31_46) && (var33_51 = (com.huawei.tools.g.a.c)d.df.get(var32_49 = (String)d.dg.get(var31_46))) != null && var33_51.by < 0.0) ** GOTO lbl-1000
+  L50085 mi=10 mb=2/2 -> [276, 277] v0 = var32_50 = var2_3.cI != null ? var2_3.cI.s(var3_12.bK) : 0.0; | if (v0 > 0.0) {
+  L50086 mi=4 mb=2/2 -> [277] if (v0 > 0.0) {
+  L50087 mi=2 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50088 mi=4 mb=2/2 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50089 mi=5 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50090 mi=5 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50091 mi=2 mb=2/2 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50092 mi=4 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50093 mi=5 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50094 mi=3 mb=2/2 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50095 mi=4 mb=0/0 -> [280] var36_58.by -= var32_50;
+  L50096 mi=2 mb=0/0 -> [281] var3_12.ca = "paid";
+  L50097 mi=2 mb=0/0 -> [282] var3_12.cb = var32_50;
+  L50098 mi=4 mb=0/0 -> [283] var3_12.cd += var32_50;
+  L50099 mi=2 mb=0/0 -> [284] var3_12.ce = d.de;
+  L50100 mi=4 mb=0/0 -> [285] var2_3.cI.v(var3_12.bK);
+  L50101 mi=2 mb=0/0 -> [286] c.a((double)var32_50);
+  L50102 mi=2 mb=0/0 -> [287] v1 = true;
+  L50106 mi=2 mb=0/0 -> [289] v1 = false;
+  L50108 mi=2 mb=0/0 -> [292, 294] v1 = true; | break block59;
+  L50110 mi=0 mb=1/2 -> [296] if (!"paid".equals(var3_12.ca)) break block60;
+  L50111 mi=10 mb=2/2 -> [297, 298] v2 = var31_47 = var2_3.cI != null ? var2_3.cI.s(var3_12.bK) : 0.0; | if (v2 > 0.0) {
+  L50112 mi=4 mb=2/2 -> [298] if (v2 > 0.0) {
+  L50113 mi=2 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50114 mi=4 mb=2/2 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50115 mi=5 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50116 mi=5 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50117 mi=2 mb=2/2 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50118 mi=4 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50119 mi=5 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50120 mi=3 mb=2/2 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50121 mi=4 mb=0/0 -> [301] var35_56.by -= var31_47;
+  L50122 mi=4 mb=0/0 -> [302] var3_12.cb += var31_47;
+  L50123 mi=4 mb=0/0 -> [303] var3_12.cd += var31_47;
+  L50124 mi=4 mb=0/0 -> [304] var2_3.cI.v(var3_12.bK);
+  L50125 mi=2 mb=0/0 -> [305] c.a((double)var31_47);
+  L50126 mi=2 mb=0/0 -> [306] v1 = true;
+  L50130 mi=2 mb=0/0 -> [308] v1 = false;
+  L50132 mi=2 mb=0/0 -> [311, 313] v1 = true; | break block59;
+  L50134 mi=0 mb=1/2 -> [315] if (var2_3.cI == null) ** GOTO lbl-1000
+  L50138 mi=0 mb=1/2 -> [318] if (var35_57 == 0.0) {
+  L50146 mi=2 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50147 mi=4 mb=2/2 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50148 mi=5 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50149 mi=5 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50150 mi=2 mb=2/2 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50151 mi=4 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50152 mi=5 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50153 mi=3 mb=2/2 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50154 mi=4 mb=0/0 -> [328] var4_23.by -= var35_57;
+  L50155 mi=2 mb=0/0 -> [329] var3_12.ca = "paid";
+  L50156 mi=2 mb=0/0 -> [330] var3_12.cb = var35_57;
+  L50157 mi=4 mb=0/0 -> [331] var3_12.cd += var35_57;
+  L50158 mi=2 mb=0/0 -> [332] var3_12.ce = d.de;
+  L50159 mi=4 mb=0/0 -> [333] var2_3.cI.v(var3_12.bK);
+  L50160 mi=2 mb=0/0 -> [334] c.a((double)var35_57);
+  L50161 mi=2 mb=0/0 -> [335] v1 = true;
+  L50166 mi=1 mb=0/0 -> [340] v1 = false;
+  L50168 mi=1 mb=0/0 -> [274] var31_46 = var3_12.bh;
+  L50169 mi=1 mb=0/0 -> [275] if (d.dg.containsKey(var31_46) && (var33_51 = (com.huawei.tools.g.a.c)d.df.get(var32_49 = (String)d.dg.get(var31_46))) != null && var33_51.by < 0.0) ** GOTO lbl-1000
+  L50170 mi=1 mb=0/0 -> [276] v0 = var32_50 = var2_3.cI != null ? var2_3.cI.s(var3_12.bK) : 0.0;
+  L50171 mi=1 mb=0/0 -> [278] var34_54 = var3_12.bh;
+  L50172 mi=1 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50173 mi=1 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50174 mi=1 mb=0/0 -> [279] if (d.dg.containsKey(var34_54) && (var36_58 = (com.huawei.tools.g.a.c)d.df.get(var35_55 = (String)d.dg.get(var34_54))) != null && var36_58.by - Math.max(0.0, var37_60 = var36_58.bz
+  L50175 mi=1 mb=0/0 -> [280] var36_58.by -= var32_50;
+  L50176 mi=1 mb=0/0 -> [280] var36_58.by -= var32_50;
+  L50177 mi=1 mb=0/0 -> [281] var3_12.ca = "paid";
+  L50178 mi=1 mb=0/0 -> [282] var3_12.cb = var32_50;
+  L50179 mi=1 mb=0/0 -> [283] var3_12.cd += var32_50;
+  L50180 mi=1 mb=0/0 -> [283] var3_12.cd += var32_50;
+  L50181 mi=1 mb=0/0 -> [284] var3_12.ce = d.de;
+  L50182 mi=1 mb=0/0 -> [285] var2_3.cI.v(var3_12.bK);
+  L50184 mi=1 mb=0/0 -> [297] v2 = var31_47 = var2_3.cI != null ? var2_3.cI.s(var3_12.bK) : 0.0;
+  L50185 mi=1 mb=0/0 -> [299] var33_52 = var3_12.bh;
+  L50186 mi=1 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50187 mi=1 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50188 mi=1 mb=0/0 -> [300] if (d.dg.containsKey(var33_52) && (var35_56 = (com.huawei.tools.g.a.c)d.df.get(var34_54 = (String)d.dg.get(var33_52))) != null && var35_56.by - Math.max(0.0, var36_59 = var35_56.bz
+  L50189 mi=1 mb=0/0 -> [301] var35_56.by -= var31_47;
+  L50190 mi=1 mb=0/0 -> [301] var35_56.by -= var31_47;
+  L50191 mi=1 mb=0/0 -> [302] var3_12.cb += var31_47;
+  L50192 mi=1 mb=0/0 -> [302] var3_12.cb += var31_47;
+  L50193 mi=1 mb=0/0 -> [303] var3_12.cd += var31_47;
+  L50194 mi=1 mb=0/0 -> [303] var3_12.cd += var31_47;
+  L50195 mi=1 mb=0/0 -> [304] var2_3.cI.v(var3_12.bK);
+  L50202 mi=1 mb=0/0 -> [326] var37_61 = var3_12.bh;
+  L50203 mi=1 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50204 mi=1 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50205 mi=1 mb=0/0 -> [327] if (d.dg.containsKey(var37_61) && (var4_23 = (com.huawei.tools.g.a.c)d.df.get(var38_62 = (String)d.dg.get(var37_61))) != null && var4_23.by - Math.max(0.0, var39_63 = var4_23.bz - 
+  L50206 mi=1 mb=0/0 -> [328] var4_23.by -= var35_57;
+  L50207 mi=1 mb=0/0 -> [328] var4_23.by -= var35_57;
+  L50208 mi=1 mb=0/0 -> [329] var3_12.ca = "paid";
+  L50209 mi=1 mb=0/0 -> [330] var3_12.cb = var35_57;
+  L50210 mi=1 mb=0/0 -> [331] var3_12.cd += var35_57;
+  L50211 mi=1 mb=0/0 -> [331] var3_12.cd += var35_57;
+  L50212 mi=1 mb=0/0 -> [332] var3_12.ce = d.de;
+  L50213 mi=1 mb=0/0 -> [333] var2_3.cI.v(var3_12.bK);
+  L50214 mi=2 mb=0/0 -> [346] var18_31.bQ = 0L;
+  L50215 mi=2 mb=0/0 -> [347] var18_31.bT = 0;
+  L50216 mi=2 mb=0/0 -> [348] var18_31.bU = null;
+  L50217 mi=1 mb=0/0 -> [349] var18_31.cj = var21_35;
+  L50221 mi=1 mb=0/0 -> [354] var23_38 = var1_1.cI.a((f)v3, v3.ce);
+  L50222 mi=1 mb=0/0 -> [355] var25_42 = var18_31.cb;
+  L50223 mi=1 mb=0/0 -> [356] var2_3 = var18_31.bh;
+  L50224 mi=1 mb=0/0 -> [362] var29_45 = var2_3.bz - var18_31.cf;
+  L50225 mi=1 mb=0/0 -> [362] var29_45 = var2_3.bz - var18_31.cf;
+  L50226 mi=1 mb=0/0 -> [363] var3_13 = var2_3.by - Math.max(0.0, var29_45) >= var23_38;
+  L50227 mi=1 mb=0/0 -> [378] var2_3.by -= var27_44;
+  L50228 mi=1 mb=0/0 -> [378] var2_3.by -= var27_44;
+  L50229 mi=1 mb=0/0 -> [379] var18_31.cd += var27_44;
+  L50230 mi=1 mb=0/0 -> [379] var18_31.cd += var27_44;
+  L50231 mi=1 mb=0/0 -> [382] var18_31.cb = var25_42 + var23_38;
+  L50232 mi=1 mb=0/0 -> [383] var18_31.ca = "paid";
+  L50233 mi=1 mb=0/0 -> [384] var18_31.ce = d.de;
+  L50234 mi=2 mb=0/0 -> [372] var18_31.bQ = 0L;
+  L50235 mi=2 mb=0/0 -> [373] var18_31.bT = 0;
+  L50236 mi=2 mb=0/0 -> [374] var18_31.bU = null;
+  L50237 mi=1 mb=0/0 -> [375] var18_31.cj = var21_35;
+  L50273 mi=1 mb=0/0 -> [414] v4 = var20_34 = var2_4.bT > 0 && var2_4.bQ > 0L;
+  L50275 mi=1 mb=0/0 -> [419] if (!var20_34 || !var14_24.equals(var2_4.bU)) continue;
+  L50291 mi=4 mb=3/4 -> [444] if (var15_26 >= 25200L && var15_26 < 32400L) {
+  L50292 mi=2 mb=0/0 -> [445] var21_36 = true;
+  L50294 mi=4 mb=3/4 -> [447] if (var15_26 >= 61200L && var15_26 < 68400L) {
+  L50295 mi=2 mb=0/0 -> [448] var2_2 = 1;
+  L50301 mi=0 mb=1/4 -> [452] if (var21_36 && var23_39) {
+  L50307 mi=0 mb=1/4 -> [458] if (var2_2 != 0 && var23_39) {
+  L50314 mi=0 mb=1/4 -> [464] if (var20_34 && !var23_39) {
+  L50315 mi=1 mb=0/0 -> [465] e.k();
+
+== e.c(Lcom/huawei/tools/g/a/f;) [出场释放车位/预约车位]
+  L376 mi=0 mb=2/4 -> [508] if (string == null && ((f)object).ck != null) {
+  L379 mi=0 mb=1/2 -> [511] if (string == null) {
+  L380 mi=1 mb=0/0 -> [512] return;
+  L383 mi=0 mb=1/2 -> [515] if (object == null) {
+  L384 mi=1 mb=0/0 -> [516] return;
+  L386 mi=0 mb=1/2 -> [518] if ("U".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L387 mi=2 mb=0/0 -> [519] ((com.huawei.tools.g.a.g)object).bt = "F";
+  L388 mi=1 mb=0/0 -> [520] ((com.huawei.tools.g.a.g)object).bh = null;
+  L389 mi=5 mb=0/0 -> [522] if (string != null && (object = (AtomicInteger)((com.huawei.tools.g.a.e)string).bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L390 mi=2 mb=2/2 -> [522] if (string != null && (object = (AtomicInteger)((com.huawei.tools.g.a.e)string).bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L391 mi=5 mb=0/0 -> [522] if (string != null && (object = (AtomicInteger)((com.huawei.tools.g.a.e)string).bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L392 mi=5 mb=2/2 -> [523] ((AtomicInteger)object).decrementAndGet();
+  L394 mi=1 mb=1/2 -> [525, 527] return; | if ("R".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L50340 mi=1 mb=0/0 -> [519] ((com.huawei.tools.g.a.g)object).bt = "F";
+  L50341 mi=2 mb=0/0 -> [520] ((com.huawei.tools.g.a.g)object).bh = null;
+  L50342 mi=1 mb=0/0 -> [521] string = (com.huawei.tools.g.a.e)d.dj.get(((com.huawei.tools.g.a.g)object).bj);
+  L50343 mi=1 mb=0/0 -> [522] if (string != null && (object = (AtomicInteger)((com.huawei.tools.g.a.e)string).bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L50344 mi=1 mb=0/0 -> [522] if (string != null && (object = (AtomicInteger)((com.huawei.tools.g.a.e)string).bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+
+== e.k(Ljava/lang/String;Ljava/lang/String;) [check_occupied_spaces]
+  L706 mi=0 mb=1/4 -> [599] if (StringUtils.isBlank((CharSequence)string) || !string.matches("\\d+")) {
+  L724 mi=0 mb=1/2 -> [612] if (StringUtils.isNotBlank((CharSequence)string2)) {
+
+== e.b(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;) [check_park_statistics]
+  L751 mi=0 mb=1/4 -> [637] if (StringUtils.isBlank((CharSequence)object) || !((String)object).matches(string)) {
+  L754 mi=0 mb=1/4 -> [640] if (StringUtils.isBlank((CharSequence)object2) || !((String)object2).matches(string)) {
+  L757 mi=0 mb=1/4 -> [643] if (StringUtils.isBlank((CharSequence)object3) || !((String)object3).matches(string)) {
+  L762 mi=0 mb=1/2 -> [647] if (string == null) {
+  L763 mi=2 mb=0/0 -> [648] return "E001:Fail";
+  L773 mi=0 mb=1/2 -> [657] int n4 = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault("S", new AtomicInteger(0)).get() : 0;
+  L774 mi=1 mb=0/0 -> [657] int n4 = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault("S", new AtomicInteger(0)).get() : 0;
+  L777 mi=0 mb=1/2 -> [660] int n7 = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault("M", new AtomicInteger(0)).get() : 0;
+  L778 mi=1 mb=0/0 -> [660] int n7 = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault("M", new AtomicInteger(0)).get() : 0;
+  L781 mi=0 mb=1/2 -> [663] int n10 = n = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault("L", new AtomicInteger(0)).get() : 0;
+  L782 mi=1 mb=0/0 -> [663] int n10 = n = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault("L", new AtomicInteger(0)).get() : 0;
+
+== e.h() [场内超时扫描]
+  L983 mi=0 mb=1/2 -> [678] if (object.bM > 0L || object.bQ > 0L || object.bS > 0 || object.bP <= 0L || l - object.bP < 900L) continue;
+
+== e.z(Ljava/lang/String;) [强制出场]
+  L1009 mi=0 mb=1/2 -> [689] if (f2 == null) {
+  L1010 mi=1 mb=0/0 -> [690] return;
+  L1015 mi=0 mb=1/2 -> [693] if (this.cI != null) {
+  L1025 mi=0 mb=1/2 -> [700] if (f2.bN != null && (object = (com.huawei.tools.g.a.g)d.dk.get(f2.bN)) != null && "U".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L1026 mi=5 mb=0/0 -> [700] if (f2.bN != null && (object = (com.huawei.tools.g.a.g)d.dk.get(f2.bN)) != null && "U".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L1027 mi=6 mb=4/4 -> [700] if (f2.bN != null && (object = (com.huawei.tools.g.a.g)d.dk.get(f2.bN)) != null && "U".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L1028 mi=2 mb=0/0 -> [701] ((com.huawei.tools.g.a.g)object).bt = "F";
+  L1029 mi=1 mb=0/0 -> [702] ((com.huawei.tools.g.a.g)object).bh = null;
+  L1030 mi=5 mb=0/0 -> [704] if (e2 != null && (object = (AtomicInteger)e2.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L1031 mi=2 mb=2/2 -> [704] if (e2 != null && (object = (AtomicInteger)e2.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L1032 mi=5 mb=0/0 -> [704] if (e2 != null && (object = (AtomicInteger)e2.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L1033 mi=5 mb=2/2 -> [705] ((AtomicInteger)object).decrementAndGet();
+  L50387 mi=1 mb=0/0 -> [700] if (f2.bN != null && (object = (com.huawei.tools.g.a.g)d.dk.get(f2.bN)) != null && "U".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L50388 mi=1 mb=0/0 -> [700] if (f2.bN != null && (object = (com.huawei.tools.g.a.g)d.dk.get(f2.bN)) != null && "U".equals(((com.huawei.tools.g.a.g)object).bt)) {
+  L50389 mi=1 mb=0/0 -> [701] ((com.huawei.tools.g.a.g)object).bt = "F";
+  L50390 mi=2 mb=0/0 -> [702] ((com.huawei.tools.g.a.g)object).bh = null;
+  L50391 mi=1 mb=0/0 -> [703] com.huawei.tools.g.a.e e2 = (com.huawei.tools.g.a.e)d.dj.get(((com.huawei.tools.g.a.g)object).bj);
+  L50392 mi=1 mb=0/0 -> [704] if (e2 != null && (object = (AtomicInteger)e2.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L50393 mi=1 mb=0/0 -> [704] if (e2 != null && (object = (AtomicInteger)e2.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+
+== e.p(Ljava/lang/String;Ljava/lang/String;) [满位判定]
+  L1382 mi=0 mb=1/2 -> [841] if ((string = (com.huawei.tools.g.a.e)d.dj.get(string)) == null) {
+  L1383 mi=2 mb=0/0 -> [842] return false;
+  L1394 mi=0 mb=1/2 -> [852] int n7 = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault(string2, new AtomicInteger(0)).get() : 0;
+  L1395 mi=1 mb=0/0 -> [852] int n7 = ((com.huawei.tools.g.a.e)string).bJ != null ? ((com.huawei.tools.g.a.e)string).bJ.getOrDefault(string2, new AtomicInteger(0)).get() : 0;
+
+== e.l() [锁定配额重算]
+  L1406 mi=0 mb=1/2 -> [862] if (e2 == null) {
+  L1407 mi=1 mb=0/0 -> [863] return;
+  L1434 mi=2 mb=1/2 -> [875] for (String string : e.B(g.I((String)((f)iterator.next()).bh))) {
+  L1438 mi=0 mb=1/2 -> [880] int n5 = n = e2.bJ != null ? e2.bJ.getOrDefault(string, new AtomicInteger(0)).get() : 0;
+  L1439 mi=1 mb=0/0 -> [880] int n5 = n = e2.bJ != null ? e2.bJ.getOrDefault(string, new AtomicInteger(0)).get() : 0;
+  L1441 mi=0 mb=1/2 -> [881] if (n2 - n3 - n4 - n <= 0) continue;
+  L1446 mi=1 mb=0/0 -> [875] for (String string : e.B(g.I((String)((f)iterator.next()).bh))) {
+
+== f.g(Ljava/lang/String;Ljava/lang/String;) [car_entry]
+  L21279 mi=0 mb=1/4 -> [202] if (!bl && g.p() >= 500) {
+  L21280 mi=6 mb=0/0 -> [203] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.F.key);
+  L21303 mi=4 mb=3/4 -> [223] if (string4 != null && "invalid".equals(((j)string4).bt)) {
+  L21304 mi=4 mb=0/0 -> [224] com.huawei.tools.h.d.dh.remove(string2);
+  L21318 mi=0 mb=1/2 -> [235] if (bl && (string4 = (com.huawei.tools.g.a.c)com.huawei.tools.h.d.df.get(string)) != null) {
+  L24100 mi=1 mb=0/0 -> [203] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.F.key);
+  L24352 mi=0 mb=1/2 -> [206] while (!com.huawei.tools.h.d.dm.add(string3 = "p" + String.format("%016d", l = Math.abs(((Random)threadLocalRandom).nextLong()) % 10000000000000000L))) {
+  L24355 mi=1 mb=0/0 -> [206] while (!com.huawei.tools.h.d.dm.add(string3 = "p" + String.format("%016d", l = Math.abs(((Random)threadLocalRandom).nextLong()) % 10000000000000000L))) {
+  L32017 mi=1 mb=0/0 -> [223] if (string4 != null && "invalid".equals(((j)string4).bt)) {
+
+== f.j(Ljava/lang/String;Ljava/lang/String;) [occupy_park]
+  L38466 mi=0 mb=1/2 -> [265] if (((com.huawei.tools.g.a.f)string).bM > 0L) {
+  L38467 mi=6 mb=0/0 -> [266] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.L.key);
+  L38489 mi=0 mb=1/4 -> [281] if (bl2 && "R".equals(g2.bt)) {
+  L38505 mi=0 mb=1/2 -> [295] if (e2 != null) {
+  L38507 mi=0 mb=1/2 -> [297] if (atomicInteger != null) {
+  L38511 mi=0 mb=2/4 -> [300] if ((object = (AtomicInteger)e2.bJ.get(g2.cl)) != null && ((AtomicInteger)object).get() > 0) {
+  L38528 mi=0 mb=1/4 -> [313] if (bl && !bl2) {
+  L38556 mi=0 mb=1/2 -> [339] if (!bl3) {
+  L38564 mi=0 mb=1/2 -> [345] if ((object2 = (com.huawei.tools.g.a.e)com.huawei.tools.h.d.dj.get(g2.bj)) != null && (object2 = (AtomicInteger)((com.huawei.tools.g.a.e)object2).bH.get(g2.cl)) != null) {
+  L38566 mi=0 mb=1/2 -> [345] if ((object2 = (com.huawei.tools.g.a.e)com.huawei.tools.h.d.dj.get(g2.bj)) != null && (object2 = (AtomicInteger)((com.huawei.tools.g.a.e)object2).bH.get(g2.cl)) != null) {
+  L40100 mi=1 mb=0/0 -> [266] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.L.key);
+  L50032 mi=2 mb=1/4 -> [319] if (!("L".equals(string5) ? true : ("M".equals(string5) ? "M".equals(string6) || "S".equals(string6) : ("S".equals(string5) ? "S".equals(string6) : false)))) {
+  L50033 mi=0 mb=1/2 -> [319] if (!("L".equals(string5) ? true : ("M".equals(string5) ? "M".equals(string6) || "S".equals(string6) : ("S".equals(string5) ? "S".equals(string6) : false)))) {
+  L50036 mi=1 mb=0/0 -> [319] if (!("L".equals(string5) ? true : ("M".equals(string5) ? "M".equals(string6) || "S".equals(string6) : ("S".equals(string5) ? "S".equals(string6) : false)))) {
+
+== f.b(Ljava/lang/String;) [release_park]
+  L50066 mi=0 mb=1/2 -> [359] if (((com.huawei.tools.g.a.f)string).bM > 0L) {
+  L50067 mi=6 mb=0/0 -> [360] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.L.key);
+  L50082 mi=0 mb=1/2 -> [371] if (object == null) {
+  L50083 mi=6 mb=0/0 -> [372] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.N.key);
+  L50086 mi=0 mb=1/2 -> [374] if (!string2.equals(((com.huawei.tools.g.a.g)object).bh)) {
+  L50087 mi=6 mb=0/0 -> [375] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.R.key);
+  L50097 mi=0 mb=1/2 -> [381] if (e2 != null) {
+  L50099 mi=0 mb=1/2 -> [383] if (atomicInteger2 != null) {
+  L50103 mi=0 mb=1/2 -> [386] if ((object = (AtomicInteger)e2.bJ.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L50109 mi=0 mb=1/2 -> [391] if (!g.K((String)string2)) {
+  L50123 mi=0 mb=1/2 -> [401] if (e3 != null && (atomicInteger = (AtomicInteger)e3.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L50125 mi=0 mb=1/2 -> [401] if (e3 != null && (atomicInteger = (AtomicInteger)e3.bH.get(((com.huawei.tools.g.a.g)object).cl)) != null) {
+  L50131 mi=0 mb=1/2 -> [405] if (!g.K((String)string2)) {
+  L50143 mi=1 mb=0/0 -> [360] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.L.key);
+  L50148 mi=1 mb=0/0 -> [372] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.N.key);
+  L50150 mi=1 mb=0/0 -> [375] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.R.key);
+
+== f.f(Ljava/lang/String;) [add_blacklist]
+  L50172 mi=0 mb=2/4 -> [423] if (string == null || string.isEmpty()) {
+  L50173 mi=2 mb=0/0 -> [424] return "E001:Fail";
+
+== f.g(Ljava/lang/String;) [del_blacklist]
+  L50180 mi=0 mb=2/4 -> [434] if (string == null || string.isEmpty()) {
+  L50181 mi=2 mb=0/0 -> [435] return "E001:Fail";
+
+== f.n(Ljava/lang/String;Ljava/lang/String;) [check_reserve_status]
+  L50467 mi=0 mb=1/4 -> [662] if (StringUtils.isBlank((CharSequence)string2) || !string2.matches("r\\d{8}")) {
+  L50470 mi=0 mb=1/2 -> [665] if (StringUtils.isBlank((CharSequence)string4)) {
+  L50471 mi=2 mb=0/0 -> [666] return "E001:Fail";
+
+== g.F(Ljava/lang/String;) [车牌是否在场]
+  L36 mi=0 mb=1/4 -> [47] if (!string.equals(f2.bh) || f2.bM != 0L) continue;
+
+== g.f(Lcom/huawei/tools/g/a/f;) [是否进场中]
+  L108 mi=0 mb=1/4 -> [110] return f2.bM == 0L && f2.bQ == 0L && f2.bN == null && !f2.bR && f2.bS > 0;
+
+== g.r(Ljava/lang/String;Ljava/lang/String;) [预约数+1]
+  L130 mi=0 mb=2/4 -> [125] if ((string2 = (e)d.dj.get(string2)) != null && ((e)string2).bJ != null) {
+
+== g.s(Ljava/lang/String;Ljava/lang/String;) [预约数-1]
+  L137 mi=0 mb=2/4 -> [131] if ((object = (e)d.dj.get(object)) != null && ((e)object).bJ != null && (object = (AtomicInteger)((e)object).bJ.get(string)) != null && ((AtomicInteger)object).get() > 0) {
+  L139 mi=0 mb=2/4 -> [131] if ((object = (e)d.dj.get(object)) != null && ((e)object).bJ != null && (object = (AtomicInteger)((e)object).bJ.get(string)) != null && ((AtomicInteger)object).get() > 0) {
+
+== h.q() [预约类（全部方法） q()]
+  L49 mi=0 mb=1/2 -> [36] if (this.cR != null) {
+
+== h.m(Ljava/lang/String;Ljava/lang/String;) [预约类（全部方法） m(Ljava/lang/String;Ljava/lang/String;)]
+  L55 mi=0 mb=1/4 -> [46] if (StringUtils.isBlank((CharSequence)string2) || !((object = string2) == null || object.length() < 6 || object.length() > 7 ? false : ((c2 = object.charAt(0)) != 'L' && c2 != 'M' 
+  L71 mi=0 mb=2/4 -> [61] if (c3 == null || !"active".equals(c3.bt)) {
+  L72 mi=6 mb=0/0 -> [62] throw new a("E001:Fail", com.huawei.tools.a.a.al.key);
+  L1306 mi=0 mb=1/6 -> [46] if (StringUtils.isBlank((CharSequence)string2) || !((object = string2) == null || object.length() < 6 || object.length() > 7 ? false : ((c2 = object.charAt(0)) != 'L' && c2 != 'M' 
+  L2318 mi=0 mb=1/4 -> [50] if (!(object != null && object.length() == 7)) {
+  L6100 mi=1 mb=0/0 -> [62] throw new a("E001:Fail", com.huawei.tools.a.a.al.key);
+  L10325 mi=0 mb=1/4 -> [76] if (!("L".equals(string6) ? true : ("M".equals(string6) ? "M".equals(object) || "S".equals(object) : ("S".equals(string6) ? "S".equals(object) : false)))) {
+  L10326 mi=0 mb=1/2 -> [76] if (!("L".equals(string6) ? true : ("M".equals(string6) ? "M".equals(object) || "S".equals(object) : ("S".equals(string6) ? "S".equals(object) : false)))) {
+  L10329 mi=1 mb=0/0 -> [76] if (!("L".equals(string6) ? true : ("M".equals(string6) ? "M".equals(object) || "S".equals(object) : ("S".equals(string6) ? "S".equals(object) : false)))) {
+  L12354 mi=0 mb=1/2 -> [89] if ((string7 = (com.huawei.tools.g.a.h)d.dv.get(string7)) == null || ((com.huawei.tools.g.a.h)string7).bw / 86400L != l) continue;
+  L13386 mi=0 mb=1/2 -> [98] while (d.dv.containsKey(string4 = "r" + String.format("%08d", ThreadLocalRandom.current().nextInt(100000000)))) {
+  L13389 mi=1 mb=0/0 -> [98] while (d.dv.containsKey(string4 = "r" + String.format("%08d", ThreadLocalRandom.current().nextInt(100000000)))) {
+
+== h.j(Ljava/lang/String;) [预约类（全部方法） j(Ljava/lang/String;)]
+  L176 mi=0 mb=1/2 -> [119] if (StringUtils.isBlank((CharSequence)string)) {
+  L177 mi=2 mb=0/0 -> [120] return "E001:Fail";
+
+== h.a(Lcom/huawei/tools/g/a/h;) [预约类（全部方法） a(Lcom/huawei/tools/g/a/h;)]
+  L290 mi=0 mb=1/2 -> [200] if (h2 == null) {
+  L291 mi=1 mb=0/0 -> [201] return;
+  L293 mi=0 mb=1/2 -> [203] if (!"used".equals(h2.bt)) {
+  L294 mi=1 mb=0/0 -> [204] return;
+
+== h.S(Ljava/lang/String;) [预约类（全部方法） S(Ljava/lang/String;)]
+  L301 mi=2 mb=1/2 -> [211, 213] return ((com.huawei.tools.g.a.h)string).bN; | return null;
+
+== h.T(Ljava/lang/String;) [预约类（全部方法） T(Ljava/lang/String;)]
+  L336 mi=0 mb=1/2 -> [218] if (!string.equals(h2.bh) || !"locked".equals(h2.bt) && !"used".equals(h2.bt)) continue;
+
+== h.U(Ljava/lang/String;) [预约类（全部方法） U(Ljava/lang/String;)]
+  L367 mi=0 mb=1/4 -> [226] if (!string.equals(f2.bh) || !g.f((f)f2)) continue;
+
+== h.b(Lcom/huawei/tools/g/a/h;) [预约类（全部方法） b(Lcom/huawei/tools/g/a/h;)]
+  L376 mi=0 mb=2/4 -> [234] if (h2 != null && "R".equals(h2.bt)) {

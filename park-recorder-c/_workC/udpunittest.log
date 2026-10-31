@@ -1,0 +1,25 @@
+test_cjl_c3101_reserve_plate_checks (__main__.MyTestCase1.test_cjl_c3101_reserve_plate_checks) ... ok
+test_cjl_c3102_reserve_space_checks (__main__.MyTestCase1.test_cjl_c3102_reserve_space_checks) ... ok
+test_cjl_c3103_reserve_occupied_space (__main__.MyTestCase1.test_cjl_c3103_reserve_occupied_space) ... ok
+test_cjl_c3104_reserve_daily_limit (__main__.MyTestCase1.test_cjl_c3104_reserve_daily_limit) ... ok
+test_cjl_c3105_reserve_expire_30min (__main__.MyTestCase1.test_cjl_c3105_reserve_expire_30min) ... ok
+test_cjl_c3106_reserve_status_param (__main__.MyTestCase1.test_cjl_c3106_reserve_status_param) ... ok
+test_cjl_c3107_reserved_car_enter_and_occupy (__main__.MyTestCase1.test_cjl_c3107_reserved_car_enter_and_occupy) ... ok
+test_cjl_c3108_reserved_car_bypass_full (__main__.MyTestCase1.test_cjl_c3108_reserved_car_bypass_full) ... ok
+test_cjl_c3109_reserved_car_entry_rejected (__main__.MyTestCase1.test_cjl_c3109_reserved_car_entry_rejected) ... ok
+test_cjl_c3110_entrying_blocks_cancel_and_expire (__main__.MyTestCase1.test_cjl_c3110_entrying_blocks_cancel_and_expire) ... ok
+test_cjl_c3111_day_change_closes_locked (__main__.MyTestCase1.test_cjl_c3111_day_change_closes_locked) ... ok
+test_cjl_c3112_forced_exit_releases_reserved (__main__.MyTestCase1.test_cjl_c3112_forced_exit_releases_reserved) ... ok
+test_cjl_c3113_used_reservation_over_midnight (__main__.MyTestCase1.test_cjl_c3113_used_reservation_over_midnight) ... ok
+test_cjl_c3114_query_reserve_accounts (__main__.MyTestCase1.test_cjl_c3114_query_reserve_accounts) ... ok
+test_cjl_c3115_park_statistics_params (__main__.MyTestCase1.test_cjl_c3115_park_statistics_params) ... ok
+test_cjl_c3116_occupied_spaces_params (__main__.MyTestCase1.test_cjl_c3116_occupied_spaces_params) ... ok
+test_cjl_c3117_lock_quota_counting (__main__.MyTestCase1.test_cjl_c3117_lock_quota_counting) ... ok
+test_cjl_c3118_occupy_release_rules (__main__.MyTestCase1.test_cjl_c3118_occupy_release_rules) ... ok
+test_cjl_c3119_exited_session_and_reentry (__main__.MyTestCase1.test_cjl_c3119_exited_session_and_reentry) ... ok
+test_cjl_c3120_forced_exit_plain_car (__main__.MyTestCase1.test_cjl_c3120_forced_exit_plain_car) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 19.906s
+
+OK
