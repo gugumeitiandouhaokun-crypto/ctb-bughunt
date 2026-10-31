@@ -1,0 +1,13 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package org.apache.logging.log4j.core.parser;
+
+import org.apache.logging.log4j.core.LogEvent;
+
+public interface LogEventParser {
+    public LogEvent parseFrom(byte[] var1);
+
+    public LogEvent parseFrom(byte[] var1, int var2, int var3);
+}
+
