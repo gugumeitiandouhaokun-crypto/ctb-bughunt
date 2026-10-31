@@ -1,0 +1,6 @@
+[CASE COST]__main__.MyTestCase1.test_cjl_g01_temp_car_unpaid_exit[TIME]0.8102202415466309
+[CASE COST]__main__.MyTestCase1.test_cjl_g02_temp_car_paid_then_overtime[TIME]0.724768877029419
+[CASE COST]__main__.MyTestCase1.test_cjl_g03_paid_then_moncard_overtime[TIME]1.1437392234802246
+[CASE COST]__main__.MyTestCase1.test_cjl_g04_negative_balance_unoccupied_exit[TIME]1.0254743099212646
+[CASE COST]__main__.MyTestCase1.test_cjl_g05_time_pass_params[TIME]0.8710684776306152
+[CASE COST]__main__.MyTestCase1.test_cjl_g06_gate_mode_blocks_pass[TIME]1.1446917057037354
