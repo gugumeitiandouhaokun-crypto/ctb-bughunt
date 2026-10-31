@@ -130,6 +130,13 @@ class cjl_Aw:
       - 检查接口：check_occupied_spaces / check_park_statistics / check_revenue
     变更：
       - occupy_park 新增 space_id 参数
+
+    C版本新增：
+      - 车位预约：reserve_space / cancel_reserve / check_reserve_status / query_reserve
+      - 洗车服务：take_wash_order / cancel_wash_order / query_wash_status / start_wash_service /
+        end_wash_service / trigger_wash_balance / query_wash_queue
+    变更：
+      - check_park_statistics 每类车位为 占用|锁定|预约 三段
     """
 
     map_member = {}
@@ -411,3 +418,40 @@ class cjl_Aw:
         expect_value = re.sub(r'r\d{8}', lambda m: cjl_Aw.map_reserve.get(m.group(0), m.group(0)), expects)
         assert ret == expect_value, f'cmd=query_reserve({args}), expected={expect_value!r}, actual={ret!r}'
         return ret
+
+    # ---------- 洗车服务（C版本新增） ----------
+    @staticmethod
+    def cjl_take_wash_order(plate_id, expects=''):
+        """返回 E000:当日三位流水号"""
+        args = [plate_id]
+        return cjl_CommonUtil.send_cmd_normal('take_wash_order', *args, expects=expects)
+
+    @staticmethod
+    def cjl_cancel_wash_order(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('cancel_wash_order', *args, expects=expects)
+
+    @staticmethod
+    def cjl_query_wash_status(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('query_wash_status', *args, expects=expects)
+
+    @staticmethod
+    def cjl_start_wash_service(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('start_wash_service', *args, expects=expects)
+
+    @staticmethod
+    def cjl_end_wash_service(wash_id, expects=''):
+        args = [wash_id]
+        return cjl_CommonUtil.send_cmd_normal('end_wash_service', *args, expects=expects)
+
+    @staticmethod
+    def cjl_trigger_wash_balance(expects=''):
+        return cjl_CommonUtil.send_cmd_normal('trigger_wash_balance', expects=expects)
+
+    @staticmethod
+    def cjl_query_wash_queue(wash_space_id=None, expects=''):
+        """wash_space_id 为空时查询全部洗车位"""
+        args = [] if wash_space_id is None else [wash_space_id]
+        return cjl_CommonUtil.send_cmd_normal('query_wash_queue', *args, expects=expects)

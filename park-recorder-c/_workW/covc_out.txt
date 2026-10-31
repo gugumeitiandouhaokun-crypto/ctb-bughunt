@@ -1,0 +1,207 @@
+﻿udpunittest 退出码 0，耗时 26s，Ran 21 tests in 26.173s OK
+| 方法 | 用途 | 行 覆盖/总 | 分支 覆盖/总 |
+|---|---|---|---|
+| c.a(Lcom/huawei/tools/g/a/f;) | 强制出场处理洗车单 | 62/75 | 17/30 |
+| c.s(Ljava/lang/String;) | 洗车费用合计 | 2/2 | 1/2 |
+| c.v(Ljava/lang/String;) | 洗车费用标记已付 | 3/3 | 1/2 |
+| c.w(Ljava/lang/String;) | 洗车费用撤销已付 | 3/3 | 1/2 |
+| f.k(Ljava/lang/String;) | take_wash_order | 108/112 | 55/60 |
+| f.l(Ljava/lang/String;) | cancel_wash_order | 31/31 | 10/10 |
+| f.m(Ljava/lang/String;) | query_wash_status | 8/8 | 4/4 |
+| f.n(Ljava/lang/String;) | start_wash_service | 45/45 | 16/20 |
+| f.o(Ljava/lang/String;) | end_wash_service | 30/30 | 7/8 |
+| f.d() | trigger_wash_balance | 12/12 | 0/0 |
+| f.p(Ljava/lang/String;) | query_wash_queue | 11/11 | 8/8 |
+| g.K(Ljava/lang/String;) | 是否在洗车队列 | 9/9 | 8/8 |
+| i.s(Ljava/lang/String;) | 洗车类（全部方法） s(Ljava/lang/String;) | 16/16 | 7/8 |
+| i.v(Ljava/lang/String;) | 洗车类（全部方法） v(Ljava/lang/String;) | 8/8 | 5/6 |
+| i.w(Ljava/lang/String;) | 洗车类（全部方法） w(Ljava/lang/String;) | 6/8 | 5/6 |
+| i.t(Ljava/lang/String;) | 洗车类（全部方法） t(Ljava/lang/String;) | 16/16 | 7/10 |
+| i.u(Ljava/lang/String;) | 洗车类（全部方法） u(Ljava/lang/String;) | 15/15 | 6/8 |
+| i.t() | 洗车类（全部方法） t() | 8/8 | 2/2 |
+| i.b(Ljava/lang/String;J) | 洗车类（全部方法） b(Ljava/lang/String;J) | 2/2 | 0/0 |
+| i.W(Ljava/lang/String;) | 洗车类（全部方法） W(Ljava/lang/String;) | 1/1 | 0/0 |
+| i.X(Ljava/lang/String;) | 洗车类（全部方法） X(Ljava/lang/String;) | 1/1 | 4/4 |
+| i.a([Ljava/lang/String;I) | 洗车类（全部方法） a([Ljava/lang/String;I) | 6/6 | 4/4 |
+| i.a([Ljava/lang/String;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicInteger;) | 洗车类（全部方法） a([Ljava/lang/String;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicInteger;) | 4/5 | 3/4 |
+| i.Y(Ljava/lang/String;) | 洗车类（全部方法） Y(Ljava/lang/String;) | 6/7 | 3/4 |
+| i.Z(Ljava/lang/String;) | 洗车类（全部方法） Z(Ljava/lang/String;) | 14/14 | 11/12 |
+| i.aa(Ljava/lang/String;) | 洗车类（全部方法） aa(Ljava/lang/String;) | 9/9 | 6/6 |
+| i.ab(Ljava/lang/String;) | 洗车类（全部方法） ab(Ljava/lang/String;) | 7/7 | 6/6 |
+| i.c(Ljava/lang/String;J) | 洗车类（全部方法） c(Ljava/lang/String;J) | 21/22 | 7/8 |
+| i.d(Ljava/lang/String;J) | 洗车类（全部方法） d(Ljava/lang/String;J) | 14/14 | 8/8 |
+| i.d(J) | 洗车类（全部方法） d(J) | 17/17 | 6/6 |
+| i.e(J) | 洗车类（全部方法） e(J) | 30/30 | 15/18 |
+| i.ac(Ljava/lang/String;) | 洗车类（全部方法） ac(Ljava/lang/String;) | 7/7 | 5/6 |
+| i.ad(Ljava/lang/String;) | 洗车类（全部方法） ad(Ljava/lang/String;) | 12/12 | 7/8 |
+| i.g(Lcom/huawei/tools/g/a/f;) | 洗车类（全部方法） g(Lcom/huawei/tools/g/a/f;) | 13/13 | 2/4 |
+| i.a(Lcom/huawei/tools/g/a/k;J) | 洗车类（全部方法） a(Lcom/huawei/tools/g/a/k;J) | 19/20 | 10/16 |
+| i.ae(Ljava/lang/String;) | 洗车类（全部方法） ae(Ljava/lang/String;) | 4/5 | 3/4 |
+| i.af(Ljava/lang/String;) | 洗车类（全部方法） af(Ljava/lang/String;) | 16/16 | 9/10 |
+| i.ag(Ljava/lang/String;) | 洗车类（全部方法） ag(Ljava/lang/String;) | 43/44 | 36/46 |
+| i.t(Ljava/lang/String;Ljava/lang/String;) | 洗车类（全部方法） t(Ljava/lang/String;Ljava/lang/String;) | 20/20 | 15/16 |
+| i.ah(Ljava/lang/String;) | 洗车类（全部方法） ah(Ljava/lang/String;) | 6/6 | 3/4 |
+| i.a(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J) | 洗车类（全部方法） a(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J) | 9/9 | 4/6 |
+| i.u(Ljava/lang/String;Ljava/lang/String;) | 洗车类（全部方法） u(Ljava/lang/String;Ljava/lang/String;) | 6/7 | 10/16 |
+| i.a(Lcom/huawei/tools/g/a/k;Ljava/lang/String;J) | 洗车类（全部方法） a(Lcom/huawei/tools/g/a/k;Ljava/lang/String;J) | 15/15 | 9/10 |
+| i.v(Ljava/lang/String;Ljava/lang/String;) | 洗车类（全部方法） v(Ljava/lang/String;Ljava/lang/String;) | 3/3 | 7/8 |
+| i.w(Ljava/lang/String;Ljava/lang/String;) | 洗车类（全部方法） w(Ljava/lang/String;Ljava/lang/String;) | 19/19 | 13/18 |
+| i.ai(Ljava/lang/String;) | 洗车类（全部方法） ai(Ljava/lang/String;) | 10/10 | 8/12 |
+合计：行 727/753，分支 374/458
+
+== c.a(Lcom/huawei/tools/g/a/f;) [强制出场处理洗车单]
+  L196 mi=0 mb=1/2 -> [40] if (this.cH != null) {
+  L204 mi=0 mb=1/2 -> [47] if (c2 != null) {
+  L222 mi=6 mb=3/4 -> [63, 64] bl = "paid".equals(f2.ca) && f2.ce > 0L; | if (bl) {
+  L225 mi=0 mb=1/2 -> [64] if (bl) {
+  L226 mi=6 mb=0/0 -> [65, 66] f f3 = f2; | d3 = this.a(f3, f3.ce);
+  L233 mi=0 mb=1/2 -> [71] if (d2 <= 0.0) {
+  L234 mi=2 mb=0/0 -> [72] f2.ca = "paid";
+  L235 mi=6 mb=2/2 -> [73] f2.cb = bl ? d5 : 0.0;
+  L236 mi=2 mb=0/0 -> [74] f2.ce = d.de;
+  L237 mi=4 mb=2/2 -> [75] if (d4 > 0.0) {
+  L238 mi=2 mb=0/0 -> [76] i.v((String)f2.bK);
+  L240 mi=1 mb=0/0 -> [78] return;
+  L245 mi=0 mb=1/2 -> [81] if ((string = (com.huawei.tools.g.a.c)d.df.get(string)) != null) {
+  L254 mi=0 mb=1/2 -> [88] if (d4 > 0.0) {
+  L10058 mi=1 mb=0/0 -> [63] bl = "paid".equals(f2.ca) && f2.ce > 0L;
+  L11058 mi=1 mb=0/0 -> [66] d3 = this.a(f3, f3.ce);
+  L12007 mi=1 mb=0/0 -> [72] f2.ca = "paid";
+  L13007 mi=1 mb=0/0 -> [73] f2.cb = bl ? d5 : 0.0;
+  L14007 mi=1 mb=0/0 -> [74] f2.ce = d.de;
+  L14011 mi=1 mb=0/0 -> [76] i.v((String)f2.bK);
+
+== c.s(Ljava/lang/String;) [洗车费用合计]
+  L267 mi=2 mb=1/2 -> [99, 100] if (this.cH == null) { | return 0.0;
+
+== c.v(Ljava/lang/String;) [洗车费用标记已付]
+  L282 mi=1 mb=1/2 -> [120, 121] if (this.cH == null) { | return;
+
+== c.w(Ljava/lang/String;) [洗车费用撤销已付]
+  L287 mi=1 mb=1/2 -> [127, 128] if (this.cH == null) { | return;
+
+== f.k(Ljava/lang/String;) [take_wash_order]
+  L50530 mi=0 mb=1/4 -> [734] if (string4 != null && (object = (com.huawei.tools.g.a.c)com.huawei.tools.h.d.df.get(string4)) != null && object.by < 0.0) {
+  L50539 mi=0 mb=1/2 -> [740] if (g.K((String)string3)) {
+  L50540 mi=6 mb=0/0 -> [741] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.aP.key);
+  L50583 mi=1 mb=0/0 -> [741] throw new com.huawei.tools.b.a("E001:Fail", com.huawei.tools.a.a.aP.key);
+  L50603 mi=0 mb=1/2 -> [768] string2 = string = "L".equals(string5) ? i.a((String[])i.cV, (int)0) : null;
+  L50606 mi=1 mb=0/0 -> [768] string2 = string = "L".equals(string5) ? i.a((String[])i.cV, (int)0) : null;
+  L50614 mi=0 mb=1/2 -> [783] double d2 = dArray == null ? 0.0 : (n2 != 0 ? (double)object3[1] : (double)object3[0]);
+  L50615 mi=2 mb=0/0 -> [783] double d2 = dArray == null ? 0.0 : (n2 != 0 ? (double)object3[1] : (double)object3[0]);
+  L50621 mi=0 mb=1/8 -> [780] n2 = (g.N((String)object3) ? false : ((n2 = (n2 + 4) % 7) == 0 || n2 == 6 ? true : i.X((String)object3))) ? 1 : (l3 >= 43200L && l3 < 50400L || l3 >= 57600L && l3 < 64800L ? 1 : 0)
+
+== f.n(Ljava/lang/String;) [start_wash_service]
+  L50715 mi=0 mb=1/2 -> [852] if (string3 != null && (string3 = (com.huawei.tools.g.a.f)com.huawei.tools.h.d.di.get(string3)) != null && ((com.huawei.tools.g.a.f)string3).bN != null) {
+  L50717 mi=0 mb=1/4 -> [852] if (string3 != null && (string3 = (com.huawei.tools.g.a.f)com.huawei.tools.h.d.di.get(string3)) != null && ((com.huawei.tools.g.a.f)string3).bN != null) {
+  L50724 mi=0 mb=1/4 -> [857] if (list.isEmpty() || !((k)list.get((int)0)).cr.equals(string2)) {
+  L50738 mi=0 mb=1/2 -> [868] if (string2 != null) {
+
+== f.o(Ljava/lang/String;) [end_wash_service]
+  L50780 mi=0 mb=1/2 -> [891] if (g2 != null) {
+
+== i.s(Ljava/lang/String;) [洗车类（全部方法） s(Ljava/lang/String;)]
+  L320 mi=0 mb=1/4 -> [41] if (!string.equals(k2.bK) || k2.cA) continue;
+
+== i.v(Ljava/lang/String;) [洗车类（全部方法） v(Ljava/lang/String;)]
+  L334 mi=0 mb=1/4 -> [53] if (!string.equals(k2.bK) || k2.cA) continue;
+
+== i.w(Ljava/lang/String;) [洗车类（全部方法） w(Ljava/lang/String;)]
+  L342 mi=0 mb=1/4 -> [60] if (!string.equals(k2.bK) || !k2.cA) continue;
+  L343 mi=1 mb=0/0 -> [61] k2.cA = false;
+  L5005 mi=2 mb=0/0 -> [61] k2.cA = false;
+
+== i.t(Ljava/lang/String;) [洗车类（全部方法） t(Ljava/lang/String;)]
+  L352 mi=0 mb=2/4 -> [68] if (!string.equals(k2.bK) || k2.ct <= 0L || k2.cu <= 0L || k2.cu <= k2.ct) continue;
+  L353 mi=0 mb=1/2 -> [68] if (!string.equals(k2.bK) || k2.ct <= 0L || k2.cu <= 0L || k2.cu <= k2.ct) continue;
+
+== i.u(Ljava/lang/String;) [洗车类（全部方法） u(Ljava/lang/String;)]
+  L364 mi=0 mb=2/4 -> [78] if (!string.equals(k2.bK) || k2.ct <= 0L || k2.cu <= 0L) continue;
+
+== i.a([Ljava/lang/String;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicInteger;) [洗车类（全部方法） a([Ljava/lang/String;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicInteger;)]
+  L481 mi=0 mb=1/2 -> [120] for (int j = 0; j < stringArray.length; ++j) {
+  L487 mi=1 mb=0/0 -> [120] for (int j = 0; j < stringArray.length; ++j) {
+
+== i.Y(Ljava/lang/String;) [洗车类（全部方法） Y(Ljava/lang/String;)]
+  L496 mi=0 mb=1/2 -> [131] return i.Z(string) < 20;
+  L497 mi=2 mb=0/0 -> [131] return i.Z(string) < 20;
+
+== i.Z(Ljava/lang/String;) [洗车类（全部方法） Z(Ljava/lang/String;)]
+  L510 mi=0 mb=1/6 -> [138] if (!string.equals(object.bN) || (int)(object.bw / 86400L) != n || !"queuing".equals(object = object.bt) && !"washing".equals(object) && !"closed".equals(object)) continue;
+
+== i.c(Ljava/lang/String;J) [洗车类（全部方法） c(Ljava/lang/String;J)]
+  L567 mi=0 mb=1/2 -> [173] k2 = k2.get(0);
+  L568 mi=1 mb=0/0 -> [175] return;
+
+== i.e(J) [洗车类（全部方法） e(J)]
+  L616 mi=0 mb=1/4 -> [220] boolean bl = "queuing".equals(k2.bt) || "washing".equals(k2.bt);
+  L619 mi=0 mb=1/2 -> [223] if (k2.cu == 0L) {
+  L624 mi=0 mb=1/4 -> [227] if ((string = (com.huawei.tools.g.a.g)d.dl.get(string)) != null && "U".equals(((com.huawei.tools.g.a.g)string).bt)) {
+
+== i.ac(Ljava/lang/String;) [洗车类（全部方法） ac(Ljava/lang/String;)]
+  L637 mi=0 mb=1/4 -> [238] if (!string.equals(f2.bh) || f2.bM != 0L) continue;
+
+== i.ad(Ljava/lang/String;) [洗车类（全部方法） ad(Ljava/lang/String;)]
+  L651 mi=0 mb=1/2 -> [249] ++n2;
+
+== i.g(Lcom/huawei/tools/g/a/f;) [洗车类（全部方法） g(Lcom/huawei/tools/g/a/f;)]
+  L658 mi=1 mb=1/2 -> [255, 256] if (f2 == null) { | return;
+  L660 mi=0 mb=1/2 -> [259] if (f2.cj > 0L) {
+
+== i.a(Lcom/huawei/tools/g/a/k;J) [洗车类（全部方法） a(Lcom/huawei/tools/g/a/k;J)]
+  L668 mi=1 mb=1/2 -> [267, 268] if (k2 == null) { | return;
+  L670 mi=1 mb=1/2 -> [272] return;
+  L672 mi=1 mb=2/4 -> [275] return;
+  L673 mi=0 mb=1/2 -> [277] if (g.K((String)k2.bh)) {
+  L674 mi=1 mb=0/0 -> [278] return;
+  L679 mi=0 mb=1/4 -> [283] if (((f)string).cj == 0L && ((f)string).cg == 0L) {
+
+== i.ae(Ljava/lang/String;) [洗车类（全部方法） ae(Ljava/lang/String;)]
+  L690 mi=0 mb=1/4 -> [289, 290] int n = -1; | switch (string.hashCode()) {
+  L694 mi=3 mb=0/0 -> [317] return new String[0];
+
+== i.af(Ljava/lang/String;) [洗车类（全部方法） af(Ljava/lang/String;)]
+  L705 mi=0 mb=1/4 -> [326] for (int j = 0; j < list.size() && j < 6; ++j) {
+
+== i.ag(Ljava/lang/String;) [洗车类（全部方法） ag(Ljava/lang/String;)]
+  L721 mi=1 mb=1/2 -> [344] return;
+  L750 mi=0 mb=1/4 -> [386] if (n2 != n3 || string4.compareTo((String)object) <= 0) continue;
+  L756 mi=0 mb=1/4 -> [394] if (i.Y(string5) && n6 < n4) {
+  L759 mi=0 mb=2/6 -> [399] if (!i.Y(string5) || n6 != n4 || string5.compareTo(string3) >= 0) continue;
+  L760 mi=2 mb=0/0 -> [400] string3 = string5;
+  L764 mi=0 mb=2/4 -> [402] if (object == null || string3 == null || !(n3 - n4 >= 2 || n3 - n4 == 1 && ((String)object).compareTo(string3) > 0)) continue;
+  L767 mi=0 mb=1/4 -> [403, 413] long l = (Long)hashMap.get(string3); | if (!bl2) continue;
+  L47905 mi=2 mb=1/2 -> [405] bl2 = false;
+  L47906 mi=2 mb=1/2 -> [406, 407] } else if (!i.Y(string3)) { | bl2 = false;
+
+== i.t(Ljava/lang/String;Ljava/lang/String;) [洗车类（全部方法） t(Ljava/lang/String;Ljava/lang/String;)]
+  L789 mi=0 mb=1/2 -> [433] while (!(i.w(string, string2) < (double)n) && (string3 = i.ai(string2)) != null) {
+
+== i.ah(Ljava/lang/String;) [洗车类（全部方法） ah(Ljava/lang/String;)]
+  L809 mi=0 mb=1/2 -> [451] arrayList.add(string3);
+
+== i.a(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J) [洗车类（全部方法） a(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J)]
+  L822 mi=2 mb=1/2 -> [466] return false;
+  L823 mi=2 mb=1/2 -> [468, 469] if (!i.Y(string)) { | return false;
+
+== i.u(Ljava/lang/String;Ljava/lang/String;) [洗车类（全部方法） u(Ljava/lang/String;Ljava/lang/String;)]
+  L835 mi=6 mb=4/6 -> [482] return "WS".equals(string2) || "WM".equals(string2) || "WL".equals(string2);
+  L837 mi=0 mb=1/4 -> [485] return "WM".equals(string2) || "WL".equals(string2);
+  L838 mi=0 mb=1/2 -> [487] if ("L".equals(string)) {
+  L841 mi=2 mb=0/0 -> [490] return false;
+
+== i.a(Lcom/huawei/tools/g/a/k;Ljava/lang/String;J) [洗车类（全部方法） a(Lcom/huawei/tools/g/a/k;Ljava/lang/String;J)]
+  L846 mi=0 mb=1/6 -> [495] if (!"queuing".equals(k3.bt) || !string.equals(k3.bN) || k3 == k2 || k3.cs <= l) continue;
+
+== i.v(Ljava/lang/String;Ljava/lang/String;) [洗车类（全部方法） v(Ljava/lang/String;Ljava/lang/String;)]
+  L856 mi=0 mb=1/4 -> [503, 504] if ("WL".equals(string) && "WM".equals(string2)) { | return true;
+
+== i.w(Ljava/lang/String;Ljava/lang/String;) [洗车类（全部方法） w(Ljava/lang/String;Ljava/lang/String;)]
+  L868 mi=0 mb=1/2 -> [516] arrayList.add(string2);
+  L872 mi=0 mb=1/2 -> [523] if (i.aa(string).size() >= 6 || i.Z(string) >= 20) continue;
+  L873 mi=0 mb=1/2 -> [523] if (i.aa(string).size() >= 6 || i.Z(string) >= 20) continue;
+  L876 mi=2 mb=2/4 -> [526, 527] if (arrayList.isEmpty() || object.isEmpty()) { | return 0.0;
+
+== i.ai(Ljava/lang/String;) [洗车类（全部方法） ai(Ljava/lang/String;)]
+  L893 mi=0 mb=1/2 -> [550] if (!i.Y(string2) || (n2 = i.aa(string2).size()) >= n && (n2 != n || string != null && string2.compareTo(string) >= 0)) continue;
+  L895 mi=0 mb=3/8 -> [550] if (!i.Y(string2) || (n2 = i.aa(string2).size()) >= n && (n2 != n || string != null && string2.compareTo(string) >= 0)) continue;

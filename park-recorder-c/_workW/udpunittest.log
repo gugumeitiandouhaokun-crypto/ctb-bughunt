@@ -1,0 +1,26 @@
+test_cjl_c3105_reserve_expire_30min (__main__.MyTestCase1.test_cjl_c3105_reserve_expire_30min) ... ok
+test_cjl_c3109_reserved_car_entry_rejected (__main__.MyTestCase1.test_cjl_c3109_reserved_car_entry_rejected) ... ok
+test_cjl_c3201_wash_order_checks (__main__.MyTestCase1.test_cjl_c3201_wash_order_checks) ... ok
+test_cjl_c3202_wash_bay_rotation (__main__.MyTestCase1.test_cjl_c3202_wash_bay_rotation) ... ok
+test_cjl_c3203_wash_start_end (__main__.MyTestCase1.test_cjl_c3203_wash_start_end) ... ok
+test_cjl_c3204_wash_call_timeout (__main__.MyTestCase1.test_cjl_c3204_wash_call_timeout) ... ok
+test_cjl_c3205_wash_cancel_and_inpark_timer (__main__.MyTestCase1.test_cjl_c3205_wash_cancel_and_inpark_timer) ... ok
+test_cjl_c3206_wash_day_end (__main__.MyTestCase1.test_cjl_c3206_wash_day_end) ... ok
+test_cjl_c3207_wash_balance_same_type (__main__.MyTestCase1.test_cjl_c3207_wash_balance_same_type) ... ok
+test_cjl_c3208_wash_balance_small_to_medium (__main__.MyTestCase1.test_cjl_c3208_wash_balance_small_to_medium) ... ok
+test_cjl_c3209_wash_bay_overflow (__main__.MyTestCase1.test_cjl_c3209_wash_bay_overflow) ... ok
+test_cjl_c3210_wash_blank_params (__main__.MyTestCase1.test_cjl_c3210_wash_blank_params) ... ok
+test_cjl_c3211_wash_fee_negative_balance (__main__.MyTestCase1.test_cjl_c3211_wash_fee_negative_balance) ... ok
+test_cjl_c3212_wash_fee_paid_at_exit (__main__.MyTestCase1.test_cjl_c3212_wash_fee_paid_at_exit) ... ok
+test_cjl_c3213_wash_parking_fee_at_exit (__main__.MyTestCase1.test_cjl_c3213_wash_parking_fee_at_exit) ... ok
+test_cjl_c3214_wash_forced_exit_with_parking_fee (__main__.MyTestCase1.test_cjl_c3214_wash_forced_exit_with_parking_fee) ... ok
+test_cjl_c3215_wash_price_workday (__main__.MyTestCase1.test_cjl_c3215_wash_price_workday) ... ok
+test_cjl_c3216_wash_price_weekend_holiday (__main__.MyTestCase1.test_cjl_c3216_wash_price_weekend_holiday) ... ok
+test_cjl_c3217_wash_balance_tie_and_large_to_medium (__main__.MyTestCase1.test_cjl_c3217_wash_balance_tie_and_large_to_medium) ... ok
+test_cjl_c3218_wash_order_after_car_exit (__main__.MyTestCase1.test_cjl_c3218_wash_order_after_car_exit) ... ok
+test_cjl_c3219_wash_balance_large_car_stays (__main__.MyTestCase1.test_cjl_c3219_wash_balance_large_car_stays) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 26.173s
+
+OK

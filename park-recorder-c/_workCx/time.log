@@ -1,4 +1,4 @@
-[CASE COST]__main__.MyTestCase1.test_cjl_c3121_blank_params[TIME]0.5695652961730957
-[CASE COST]__main__.MyTestCase1.test_cjl_c3122_small_lock_overflow_to_medium[TIME]3.007741928100586
-[CASE COST]__main__.MyTestCase1.test_cjl_c3123_large_lock_no_space[TIME]1.0552036762237549
-[CASE COST]__main__.MyTestCase1.test_cjl_c3124_long_stay_forced_exit_occupied[TIME]0.7534167766571045
+[CASE COST]__main__.MyTestCase1.test_cjl_c3121_blank_params[TIME]0.5657575130462646
+[CASE COST]__main__.MyTestCase1.test_cjl_c3122_small_lock_overflow_to_medium[TIME]3.0098352432250977
+[CASE COST]__main__.MyTestCase1.test_cjl_c3123_large_lock_no_space[TIME]1.0548603534698486
+[CASE COST]__main__.MyTestCase1.test_cjl_c3124_long_stay_forced_exit_occupied[TIME]0.7513065338134766

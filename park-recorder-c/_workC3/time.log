@@ -1,0 +1,14 @@
+[CASE COST]__main__.MyTestCase1.test_cjl_c3301_wash_bay_outside_standard_spaces[TIME]0.567255973815918
+[CASE COST]__main__.MyTestCase1.test_cjl_c3302_wash_once_per_day[TIME]0.721900224685669
+[CASE COST]__main__.MyTestCase1.test_cjl_c3303_wash_bay_daily_limit_20[TIME]5.241647720336914
+[CASE COST]__main__.MyTestCase1.test_cjl_c3304_wash_price_medium_large[TIME]1.5980546474456787
+[CASE COST]__main__.MyTestCase1.test_cjl_c3305_wash_peak_boundaries[TIME]3.077162504196167
+[CASE COST]__main__.MyTestCase1.test_cjl_c3306_wash_cancel_and_timeout_fee[TIME]1.4159953594207764
+[CASE COST]__main__.MyTestCase1.test_cjl_c3307_wash_parking_waiver_moncard[TIME]1.2914657592773438
+[CASE COST]__main__.MyTestCase1.test_cjl_c3308_wash_parking_on_holiday[TIME]0.6627662181854248
+[CASE COST]__main__.MyTestCase1.test_cjl_c3309_wash_fee_temp_pay_and_revenue[TIME]1.2067029476165771
+[CASE COST]__main__.MyTestCase1.test_cjl_c3310_wash_fee_cross_day_revenue[TIME]0.8146018981933594
+[CASE COST]__main__.MyTestCase1.test_cjl_c3311_wash_transition_and_close[TIME]1.268420696258545
+[CASE COST]__main__.MyTestCase1.test_cjl_c3312_wash_balance_stack_insert[TIME]1.6288211345672607
+[CASE COST]__main__.MyTestCase1.test_cjl_c3313_reserved_car_normal_parking_fee[TIME]0.9348571300506592
+[CASE COST]__main__.MyTestCase1.test_cjl_c3314_wash_cancel_free_settlement[TIME]0.7220096588134766

@@ -1,0 +1,19 @@
+test_cjl_c3301_wash_bay_outside_standard_spaces (__main__.MyTestCase1.test_cjl_c3301_wash_bay_outside_standard_spaces) ... ok
+test_cjl_c3302_wash_once_per_day (__main__.MyTestCase1.test_cjl_c3302_wash_once_per_day) ... ok
+test_cjl_c3303_wash_bay_daily_limit_20 (__main__.MyTestCase1.test_cjl_c3303_wash_bay_daily_limit_20) ... ok
+test_cjl_c3304_wash_price_medium_large (__main__.MyTestCase1.test_cjl_c3304_wash_price_medium_large) ... ok
+test_cjl_c3305_wash_peak_boundaries (__main__.MyTestCase1.test_cjl_c3305_wash_peak_boundaries) ... ok
+test_cjl_c3306_wash_cancel_and_timeout_fee (__main__.MyTestCase1.test_cjl_c3306_wash_cancel_and_timeout_fee) ... ok
+test_cjl_c3307_wash_parking_waiver_moncard (__main__.MyTestCase1.test_cjl_c3307_wash_parking_waiver_moncard) ... ok
+test_cjl_c3308_wash_parking_on_holiday (__main__.MyTestCase1.test_cjl_c3308_wash_parking_on_holiday) ... ok
+test_cjl_c3309_wash_fee_temp_pay_and_revenue (__main__.MyTestCase1.test_cjl_c3309_wash_fee_temp_pay_and_revenue) ... ok
+test_cjl_c3310_wash_fee_cross_day_revenue (__main__.MyTestCase1.test_cjl_c3310_wash_fee_cross_day_revenue) ... ok
+test_cjl_c3311_wash_transition_and_close (__main__.MyTestCase1.test_cjl_c3311_wash_transition_and_close) ... ok
+test_cjl_c3312_wash_balance_stack_insert (__main__.MyTestCase1.test_cjl_c3312_wash_balance_stack_insert) ... ok
+test_cjl_c3313_reserved_car_normal_parking_fee (__main__.MyTestCase1.test_cjl_c3313_reserved_car_normal_parking_fee) ... ok
+test_cjl_c3314_wash_cancel_free_settlement (__main__.MyTestCase1.test_cjl_c3314_wash_cancel_free_settlement) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 24.862s
+
+OK

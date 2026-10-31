@@ -41,6 +41,23 @@ TARGETS = [
     ('g', 'J', f'({S})Z', '是否黑名单'),
 ]
 
+TARGETS_WASH = [
+    ('i', None, None, '洗车类（全部方法）'),
+    ('f', 'k', f'({S})L', 'take_wash_order'),
+    ('f', 'l', f'({S})L', 'cancel_wash_order'),
+    ('f', 'm', f'({S})L', 'query_wash_status'),
+    ('f', 'n', f'({S})L', 'start_wash_service'),
+    ('f', 'o', f'({S})L', 'end_wash_service'),
+    ('f', 'd', '()L', 'trigger_wash_balance'),
+    ('f', 'p', f'({S})L', 'query_wash_queue'),
+    ('f', 'lambda$', None, '时间推进洗车钩子'),
+    ('g', 'K', f'({S})Z', '是否在洗车队列'),
+    ('c', 's', f'({S})D', '洗车费用合计'),
+    ('c', 'v', f'({S})V', '洗车费用标记已付'),
+    ('c', 'w', f'({S})V', '洗车费用撤销已付'),
+    ('c', 'a', f'({F})V', '强制出场处理洗车单'),
+]
+
 
 def wanted(cls, name, desc):
     for c, n, d, label in TARGETS:
@@ -49,6 +66,8 @@ def wanted(cls, name, desc):
         if n is None:
             if name not in ('<init>', '<clinit>') and not name.startswith('lambda$'):
                 return label + f' {name}{desc.split(")")[0]})'
+        elif n == 'lambda$' and name.startswith('lambda$'):
+            return label + f' {name}'
         elif n == name and desc.startswith(d):
             return label
     return None
@@ -79,7 +98,10 @@ def main():
     ap.add_argument('--no-run', action='store_true')
     ap.add_argument('--gaps', action='store_true')
     ap.add_argument('--exec', nargs='*')
+    ap.add_argument('--set', choices=['park', 'wash'], default='park')
     args = ap.parse_args()
+    if args.set == 'wash':
+        TARGETS[:] = TARGETS_WASH
     work = os.path.join(HERE, args.work)
     exec_path = os.path.join(work, 'jacocoC.exec')
     if not args.no_run and not args.exec:

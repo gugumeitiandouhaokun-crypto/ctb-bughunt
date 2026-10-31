@@ -4,6 +4,6 @@ test_cjl_c3123_large_lock_no_space (__main__.MyTestCase1.test_cjl_c3123_large_lo
 test_cjl_c3124_long_stay_forced_exit_occupied (__main__.MyTestCase1.test_cjl_c3124_long_stay_forced_exit_occupied) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 8.794s
+Ran 4 tests in 8.775s
 
 OK

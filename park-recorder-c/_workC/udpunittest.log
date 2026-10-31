@@ -20,6 +20,6 @@ test_cjl_c3119_exited_session_and_reentry (__main__.MyTestCase1.test_cjl_c3119_e
 test_cjl_c3120_forced_exit_plain_car (__main__.MyTestCase1.test_cjl_c3120_forced_exit_plain_car) ... ok
 
 ----------------------------------------------------------------------
-Ran 20 tests in 19.906s
+Ran 20 tests in 19.923s
 
 OK
