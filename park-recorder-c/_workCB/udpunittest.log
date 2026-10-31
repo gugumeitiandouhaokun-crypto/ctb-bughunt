@@ -1,0 +1,23 @@
+test_cjl_cb01_recharge_tiers_and_cap (__main__.MyTestCase1.test_cjl_cb01_recharge_tiers_and_cap) ... ok
+test_cjl_cb02_transfer_account (__main__.MyTestCase1.test_cjl_cb02_transfer_account) ... ok
+test_cjl_cb03_moncard_purchase (__main__.MyTestCase1.test_cjl_cb03_moncard_purchase) ... ok
+test_cjl_cb04_moncard_limit_and_year_end (__main__.MyTestCase1.test_cjl_cb04_moncard_limit_and_year_end) ... ok
+test_cjl_cb05_moncard_transfer (__main__.MyTestCase1.test_cjl_cb05_moncard_transfer) ... ok
+test_cjl_cb06_member_fee_basics (__main__.MyTestCase1.test_cjl_cb06_member_fee_basics) ... ok
+test_cjl_cb07_cross_day_and_space_diff (__main__.MyTestCase1.test_cjl_cb07_cross_day_and_space_diff) ... ok
+test_cjl_cb08_holiday_fee (__main__.MyTestCase1.test_cjl_cb08_holiday_fee) ... ok
+test_cjl_cb09_moncard_fee (__main__.MyTestCase1.test_cjl_cb09_moncard_fee) ... ok
+test_cjl_cb10_temp_pay (__main__.MyTestCase1.test_cjl_cb10_temp_pay) ... ok
+test_cjl_cb11_paid_window_and_reoccupy (__main__.MyTestCase1.test_cjl_cb11_paid_window_and_reoccupy) ... ok
+test_cjl_cb12_member_pay_bal_and_refund (__main__.MyTestCase1.test_cjl_cb12_member_pay_bal_and_refund) ... ok
+test_cjl_cb13_negative_balance (__main__.MyTestCase1.test_cjl_cb13_negative_balance) ... ok
+test_cjl_cb14_blacklist (__main__.MyTestCase1.test_cjl_cb14_blacklist) ... ok
+test_cjl_cb15_zombie_15_days (__main__.MyTestCase1.test_cjl_cb15_zombie_15_days) ... ok
+test_cjl_cb16_revenue_scopes (__main__.MyTestCase1.test_cjl_cb16_revenue_scopes) ... ok
+test_cjl_cb17_session_gift_and_moncard (__main__.MyTestCase1.test_cjl_cb17_session_gift_and_moncard) ... ok
+test_cjl_cb18_query_asset_params (__main__.MyTestCase1.test_cjl_cb18_query_asset_params) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 23.540s
+
+OK
