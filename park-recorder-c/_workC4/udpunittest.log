@@ -1,0 +1,10 @@
+test_cjl_c3315_wash_waiver_on_discount_holiday (__main__.MyTestCase1.test_cjl_c3315_wash_waiver_on_discount_holiday) ... ok
+test_cjl_c3316_wash_space_diff_fee (__main__.MyTestCase1.test_cjl_c3316_wash_space_diff_fee) ... ok
+test_cjl_c3317_wash_temp_car_pay (__main__.MyTestCase1.test_cjl_c3317_wash_temp_car_pay) ... ok
+test_cjl_c3318_wash_fee_session_bonus (__main__.MyTestCase1.test_cjl_c3318_wash_fee_session_bonus) ... ok
+test_cjl_c3319_reserve_large_space_by_small_car (__main__.MyTestCase1.test_cjl_c3319_reserve_large_space_by_small_car) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 8.315s
+
+OK

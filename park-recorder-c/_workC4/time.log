@@ -1,0 +1,5 @@
+[CASE COST]__main__.MyTestCase1.test_cjl_c3315_wash_waiver_on_discount_holiday[TIME]1.0195701122283936
+[CASE COST]__main__.MyTestCase1.test_cjl_c3316_wash_space_diff_fee[TIME]1.0559563636779785
+[CASE COST]__main__.MyTestCase1.test_cjl_c3317_wash_temp_car_pay[TIME]0.5707190036773682
+[CASE COST]__main__.MyTestCase1.test_cjl_c3318_wash_fee_session_bonus[TIME]0.9333438873291016
+[CASE COST]__main__.MyTestCase1.test_cjl_c3319_reserve_large_space_by_small_car[TIME]1.3233895301818848
