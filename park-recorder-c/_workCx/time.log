@@ -1,4 +1,12 @@
-[CASE COST]__main__.MyTestCase1.test_cjl_c3121_blank_params[TIME]0.5657575130462646
-[CASE COST]__main__.MyTestCase1.test_cjl_c3122_small_lock_overflow_to_medium[TIME]3.0098352432250977
-[CASE COST]__main__.MyTestCase1.test_cjl_c3123_large_lock_no_space[TIME]1.0548603534698486
-[CASE COST]__main__.MyTestCase1.test_cjl_c3124_long_stay_forced_exit_occupied[TIME]0.7513065338134766
+[CASE COST]__main__.MyTestCase1.test_cjl_cx01_reserve_across_midnight[TIME]1.2588303089141846
+[CASE COST]__main__.MyTestCase1.test_cjl_cx02_reserve_last_space_against_locks[TIME]5.509297847747803
+[CASE COST]__main__.MyTestCase1.test_cjl_cx03_reserved_space_grab_by_others[TIME]1.084416389465332
+[CASE COST]__main__.MyTestCase1.test_cjl_cx04_reserve_used_counts_daily[TIME]1.388075828552246
+[CASE COST]__main__.MyTestCase1.test_cjl_cx05_wash_order_id_next_day[TIME]1.0540516376495361
+[CASE COST]__main__.MyTestCase1.test_cjl_cx06_queued_car_leaves_park[TIME]1.084524393081665
+[CASE COST]__main__.MyTestCase1.test_cjl_cx07_parked_car_called_timeout[TIME]0.7525413036346436
+[CASE COST]__main__.MyTestCase1.test_cjl_cx08_blacklisted_car_washing[TIME]0.9372818470001221
+[CASE COST]__main__.MyTestCase1.test_cjl_cx09_large_queue_full[TIME]0.9945573806762695
+[CASE COST]__main__.MyTestCase1.test_cjl_cx10_reserved_car_washes[TIME]0.7864716053009033
+[CASE COST]__main__.MyTestCase1.test_cjl_cx11_moncard_large_space_wash[TIME]0.8104801177978516
+[CASE COST]__main__.MyTestCase1.test_cjl_cx12_balance_with_washing_bays[TIME]1.3235797882080078
