@@ -1,0 +1,27 @@
+test_cjl_c01_recharge_tiers_and_gift (__main__.MyTestCase1.test_cjl_c01_recharge_tiers_and_gift) ... ok
+test_cjl_c02_recharge_cap_5000 (__main__.MyTestCase1.test_cjl_c02_recharge_cap_5000) ... ok
+test_cjl_c03_recharge_account_states (__main__.MyTestCase1.test_cjl_c03_recharge_account_states) ... ok
+test_cjl_c04_negative_balance_debt_and_recharge (__main__.MyTestCase1.test_cjl_c04_negative_balance_debt_and_recharge) ... ok
+test_cjl_c05_gift_during_session_locked_for_payment (__main__.MyTestCase1.test_cjl_c05_gift_during_session_locked_for_payment) ... ok
+test_cjl_c06_exit_auto_deduct_and_refund (__main__.MyTestCase1.test_cjl_c06_exit_auto_deduct_and_refund) ... ok
+test_cjl_c07_bind_in_park_locks_all_gift (__main__.MyTestCase1.test_cjl_c07_bind_in_park_locks_all_gift) ... ok
+test_cjl_c08_transfer_account_rules (__main__.MyTestCase1.test_cjl_c08_transfer_account_rules) ... ok
+test_cjl_c09_transfer_account_gift_lock_max_over_cars (__main__.MyTestCase1.test_cjl_c09_transfer_account_gift_lock_max_over_cars) ... ok
+test_cjl_c10_moncard_price_and_checks (__main__.MyTestCase1.test_cjl_c10_moncard_price_and_checks) ... ok
+test_cjl_c11_moncard_consumes_gift_first (__main__.MyTestCase1.test_cjl_c11_moncard_consumes_gift_first) ... ok
+test_cjl_c12_moncard_lifecycle_expire_and_repurchase (__main__.MyTestCase1.test_cjl_c12_moncard_lifecycle_expire_and_repurchase) ... ok
+test_cjl_c13_moncard_limit_12_per_plate (__main__.MyTestCase1.test_cjl_c13_moncard_limit_12_per_plate) ... ok
+test_cjl_c14_moncard_year_end_truncate (__main__.MyTestCase1.test_cjl_c14_moncard_year_end_truncate) ... ok
+test_cjl_c15_transfer_moncard_floor_and_limits (__main__.MyTestCase1.test_cjl_c15_transfer_moncard_floor_and_limits) ... ok
+test_cjl_c16_transfer_moncard_receiver_card_starts_now (__main__.MyTestCase1.test_cjl_c16_transfer_moncard_receiver_card_starts_now) ... ok
+test_cjl_c17_query_asset_format_and_states (__main__.MyTestCase1.test_cjl_c17_query_asset_format_and_states) ... ok
+test_cjl_c18_revenue_attribution_by_time (__main__.MyTestCase1.test_cjl_c18_revenue_attribution_by_time) ... ok
+test_cjl_c19_unregister_unbind_with_card_and_balance (__main__.MyTestCase1.test_cjl_c19_unregister_unbind_with_card_and_balance) ... ok
+test_cjl_c20_forced_settle_deducts_balance (__main__.MyTestCase1.test_cjl_c20_forced_settle_deducts_balance) ... ok
+test_cjl_c21_pay_parkcost_edges (__main__.MyTestCase1.test_cjl_c21_pay_parkcost_edges) ... ok
+test_cjl_c22_locked_gift_exceeds_balance (__main__.MyTestCase1.test_cjl_c22_locked_gift_exceeds_balance) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 39.717s
+
+OK

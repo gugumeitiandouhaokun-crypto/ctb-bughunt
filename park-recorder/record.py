@@ -593,11 +593,11 @@ def write_report(work: Path, version: str, results: dict, verify_text: str) -> P
     return path
 
 
-def load_scenes(version: str):
+def load_scenes(version: str, module: str | None = None):
     sys.path.insert(0, str(HERE))
     SCENES.clear()
     sys.modules['record'] = sys.modules[__name__]
-    importlib.import_module(f'scenes_{version.lower()}')
+    importlib.import_module(module or f'scenes_{version.lower()}')
     return list(SCENES)
 
 
@@ -605,13 +605,14 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--work', help='答题目录（含 jar、testtool.py、config.properties、udpunittest.py）')
     ap.add_argument('--version', required=True, choices=['A', 'B'], help='题目版本，决定使用 scenes_a.py 还是 scenes_b.py')
+    ap.add_argument('--scenes', help='场景模块名，默认 scenes_a / scenes_b')
     ap.add_argument('--only', nargs='*', default=[], help='只录制名称包含这些片段的测试')
     ap.add_argument('--runs', type=int, default=2, help='录制轮数，用于检查返回是否稳定，默认 2')
     ap.add_argument('--no-verify', action='store_true', help='写入后不执行 udpunittest.py 验证')
     ap.add_argument('--list', action='store_true', help='只列出测试名')
     ap.add_argument('--no-oracle', action='store_true', help='不使用 oracle.js，按平台框架 start_dut 启动 jar')
     args = ap.parse_args(argv)
-    scenes = load_scenes(args.version)
+    scenes = load_scenes(args.version, args.scenes)
     if args.only:
         scenes = [(n, f) for n, f in scenes if any(k in n for k in args.only)]
     if args.list:
