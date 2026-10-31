@@ -1,0 +1,15 @@
+test_cjl_cz01_balance_stage1_wm_internal (__main__.MyTestCase1.test_cjl_cz01_balance_stage1_wm_internal) ... ok
+test_cjl_cz02_reserve_quota_expire_cancel_mix (__main__.MyTestCase1.test_cjl_cz02_reserve_quota_expire_cancel_mix) ... ok
+test_cjl_cz03_reserve_before_midnight_enter_after (__main__.MyTestCase1.test_cjl_cz03_reserve_before_midnight_enter_after) ... ok
+test_cjl_cz04_two_members_race_same_space (__main__.MyTestCase1.test_cjl_cz04_two_members_race_same_space) ... ok
+test_cjl_cz05_reserved_washed_never_parked (__main__.MyTestCase1.test_cjl_cz05_reserved_washed_never_parked) ... ok
+test_cjl_cz06_reserve_by_invalid_owner (__main__.MyTestCase1.test_cjl_cz06_reserve_by_invalid_owner) ... ok
+test_cjl_cz07_wash_while_occupying_space (__main__.MyTestCase1.test_cjl_cz07_wash_while_occupying_space) ... ok
+test_cjl_cz08_s_order_spills_to_wl (__main__.MyTestCase1.test_cjl_cz08_s_order_spills_to_wl) ... ok
+test_cjl_cz09_expired_then_retake_and_balance (__main__.MyTestCase1.test_cjl_cz09_expired_then_retake_and_balance) ... ok
+test_cjl_cz10_balance_after_1730_expiry (__main__.MyTestCase1.test_cjl_cz10_balance_after_1730_expiry) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 14.542s
+
+OK

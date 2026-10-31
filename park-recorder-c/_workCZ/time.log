@@ -1,0 +1,10 @@
+[CASE COST]__main__.MyTestCase1.test_cjl_cz01_balance_stage1_wm_internal[TIME]1.232069492340088
+[CASE COST]__main__.MyTestCase1.test_cjl_cz02_reserve_quota_expire_cancel_mix[TIME]0.6685385704040527
+[CASE COST]__main__.MyTestCase1.test_cjl_cz03_reserve_before_midnight_enter_after[TIME]0.8402454853057861
+[CASE COST]__main__.MyTestCase1.test_cjl_cz04_two_members_race_same_space[TIME]0.7554306983947754
+[CASE COST]__main__.MyTestCase1.test_cjl_cz05_reserved_washed_never_parked[TIME]0.7214055061340332
+[CASE COST]__main__.MyTestCase1.test_cjl_cz06_reserve_by_invalid_owner[TIME]0.5444366931915283
+[CASE COST]__main__.MyTestCase1.test_cjl_cz07_wash_while_occupying_space[TIME]0.6938884258270264
+[CASE COST]__main__.MyTestCase1.test_cjl_cz08_s_order_spills_to_wl[TIME]2.9226443767547607
+[CASE COST]__main__.MyTestCase1.test_cjl_cz09_expired_then_retake_and_balance[TIME]1.2308299541473389
+[CASE COST]__main__.MyTestCase1.test_cjl_cz10_balance_after_1730_expiry[TIME]1.359081745147705
